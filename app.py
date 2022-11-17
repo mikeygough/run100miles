@@ -7,17 +7,24 @@ import pandas as pd
 app = Dash(__name__)
 
 
-# load in (numeric) data
+# ! LOAD (numeric) DATA ! #
 df = pd.read_csv('data/numeric_data.csv', parse_dates=['Date'],
                          infer_datetime_format=True, index_col='Date',
                          thousands=',')
 
-# create the fig
-fig = px.line(data_frame=df, y='Distance')
+
+# ! GENERATE DATA ! #
+# create the fig1 (distance)
+fig1 = px.line(data_frame=df, y='Distance')
+
+# create the fig2 (cumulative sum)
+fig2 = px.bar(data_frame=df['Distance'].cumsum(), y='Distance',
+               color_discrete_sequence=['#656EF2']*len(df))
 
 total_ran = int(df['Distance'].sum())
 
-# create layout
+
+# ! LAYOUT ! #
 app.layout = html.Div(children=[
     
     html.H1(children='Run 100 Miles'),
@@ -34,9 +41,14 @@ app.layout = html.Div(children=[
     html.Div(id='output-container-date-picker-range'),
     
     dcc.Graph(id='graph1',
-              figure=fig)
+              figure=fig1),
+
+    dcc.Graph(id='graph2',
+              figure=fig2)
     ])
 
+
+# ! CALLBACKS ! #
 @app.callback(
     Output('graph1', 'figure'),
     Input('date_filter', 'start_date'),
@@ -57,5 +69,7 @@ def updateTotalDistance(start_date, end_date):
     else:
         return '{} Miles'.format(int(df[start_date:end_date]['Distance'].sum()))
 
+
+# ! MAIN ! #
 if __name__ == '__main__':
     app.run_server(debug=True)
