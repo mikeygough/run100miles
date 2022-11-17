@@ -1,5 +1,6 @@
 # test dash dashboard
 from dash import Dash, html, dcc
+from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
 
@@ -17,11 +18,32 @@ fig = px.line(data_frame=df, y='Distance')
 
 # create layout
 app.layout = html.Div(children=[
+    
     html.H1(children='hello, world'),
+    
     html.Div(children='i like to run'),
-    dcc.Graph(id='example-graph',
-        figure=fig)
+    
+    dcc.DatePickerRange(id='date_filter',
+                        start_date=df.index.min(),
+                        end_date=df.index.max(),
+                        min_date_allowed=df.index.min(),
+                        max_date_allowed=df.index.max()),
+
+    html.Div(id='output-container-date-picker-range'),
+    
+    dcc.Graph(id='graph1',
+              figure=fig)
     ])
+
+@app.callback(
+    Output('graph1', 'figure'),
+    Input('date_filter', 'start_date'),
+    Input('date_filter', 'end_date'))
+def updateGraph(start_date, end_date):
+    if not start_date or not end_date:
+        raise dash.exceptions.PreventUpdate
+    else:
+        return px.line(data_frame=df[start_date:end_date], y='Distance')
 
 if __name__ == '__main__':
     app.run_server(debug=True)
