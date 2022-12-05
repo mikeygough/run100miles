@@ -17,31 +17,41 @@ df = pd.read_csv('data/numeric_data.csv', parse_dates=['Date'],
 # create the fig1 (distance)
 fig1 = px.line(data_frame=df, y='Distance')
 
-# create the fig2 (cumulative sum)
+# create the fig2 (cumulative distance)
 fig2 = px.bar(data_frame=df['Distance'].cumsum(), y='Distance',
                color_discrete_sequence=['#656EF2']*len(df))
 
 total_ran = int(df['Distance'].sum())
+total_runs = int(df[df['Distance'] > 0].shape[0])
 
 
 # ! LAYOUT ! #
 app.layout = html.Div(children=[
     
-    html.H1(children='Run 100 Miles'),
-    
-    html.Div(id='total_distance', 
-             children='{} Miles'.format(total_ran)),
-    
+    html.H1(children='Run100Miles'),
+
+    html.H3(children='Pick a date range & see your running stats update automagically!'),
+
     dcc.DatePickerRange(id='date_filter',
                         start_date=df.index.min(),
                         end_date=df.index.max(),
                         min_date_allowed=df.index.min(),
                         max_date_allowed=df.index.max()),
+    
+    html.H3(id='total_distance', 
+             children='{} Miles Ran'.format(total_ran)),
+
+    html.H3(id='total_runs', 
+             children='{} Runs'.format(total_runs)),
 
     html.Div(id='output-container-date-picker-range'),
     
+    html.H3(children='Runs by Distance'),
+
     dcc.Graph(id='graph1',
               figure=fig1),
+
+    html.H3(children='Cumulative Distance'),
 
     dcc.Graph(id='graph2',
               figure=fig2)
@@ -58,7 +68,18 @@ def updateTotalDistance(start_date, end_date):
     if not start_date or not end_date:
         raise dash.exceptions.PreventUpdate
     else:
-        return '{} Miles'.format(int(df[start_date:end_date]['Distance'].sum()))
+        return '{} Miles Ran'.format(int(df[start_date:end_date]['Distance'].sum()))
+
+# Total Runs
+@app.callback(
+    Output('total_runs', 'children'),
+    Input('date_filter', 'start_date'),
+    Input('date_filter', 'end_date'))
+def updateTotalRuns(start_date, end_date):
+    if not start_date or not end_date:
+        raise dash.exceptions.PreventUpdate
+    else:
+        return '{} Runs'.format(int(df[start_date:end_date][df['Distance'] > 0].shape[0]))
 
 # Distance Plot
 @app.callback(
