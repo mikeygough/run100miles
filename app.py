@@ -21,6 +21,9 @@ fig1 = px.line(data_frame=df, y='Distance')
 fig2 = px.bar(data_frame=df['Distance'].cumsum(), y='Distance',
                color_discrete_sequence=['#656EF2']*len(df))
 
+# create the fig3 (rolling weekly mileage)
+fig3 = px.line(data_frame=df['Distance'].rolling(7).sum(), y='Distance')
+
 total_ran = int(df['Distance'].sum())
 total_runs = int(df[df['Distance'] > 0].shape[0])
 
@@ -46,15 +49,20 @@ app.layout = html.Div(children=[
 
     html.Div(id='output-container-date-picker-range'),
     
-    html.H3(children='Runs by Distance'),
+    html.H3(children='Runs by Distance...'),
 
     dcc.Graph(id='graph1',
               figure=fig1),
 
-    html.H3(children='Cumulative Distance'),
+    html.H3(children='Cumulative Distance...'),
 
     dcc.Graph(id='graph2',
-              figure=fig2)
+              figure=fig2),
+
+    html.H3(children='Rolling Weekly Mileage...'),
+
+    dcc.Graph(id='graph3',
+              figure=fig3),
     ])
 
 
@@ -111,6 +119,21 @@ def updateCumulativeDistanceGraph(start_date, end_date):
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         return px.bar(data_frame=df_alldays['Distance'].cumsum(), y='Distance',
             color_discrete_sequence=['#656EF2']*len(df_alldays))
+
+# Rolling Weekly Mileage
+@app.callback(
+    Output('graph3', 'figure'),
+    Input('date_filter', 'start_date'),
+    Input('date_filter', 'end_date'))
+def updateRollingMileageGraph(start_date, end_date):
+    if not start_date or not end_date:
+        raise dash.exceptions.PreventUpdate
+    else:
+        # define date range
+        idx = pd.date_range(start_date, end_date)
+        # reindex
+        df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
+        return px.line(data_frame=df_alldays['Distance'].rolling(7).sum(), y='Distance')
 
 
 # ! MAIN ! #
