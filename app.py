@@ -49,16 +49,7 @@ app.layout = html.Div(children=[
 
 
 # ! CALLBACKS ! #
-@app.callback(
-    Output('graph1', 'figure'),
-    Input('date_filter', 'start_date'),
-    Input('date_filter', 'end_date'))
-def updateGraph(start_date, end_date):
-    if not start_date or not end_date:
-        raise dash.exceptions.PreventUpdate
-    else:
-        return px.line(data_frame=df[start_date:end_date], y='Distance')
-
+# Total Distance
 @app.callback(
     Output('total_distance', 'children'),
     Input('date_filter', 'start_date'),
@@ -68,6 +59,37 @@ def updateTotalDistance(start_date, end_date):
         raise dash.exceptions.PreventUpdate
     else:
         return '{} Miles'.format(int(df[start_date:end_date]['Distance'].sum()))
+
+# Distance Plot
+@app.callback(
+    Output('graph1', 'figure'),
+    Input('date_filter', 'start_date'),
+    Input('date_filter', 'end_date'))
+def updateDistanceGraph(start_date, end_date):
+    if not start_date or not end_date:
+        raise dash.exceptions.PreventUpdate
+    else:
+        # define date range
+        idx = pd.date_range(start_date, end_date)
+        # reindex
+        df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
+        return px.line(data_frame=df_alldays, y='Distance')
+
+# Cumulative Distance Plot
+@app.callback(
+    Output('graph2', 'figure'),
+    Input('date_filter', 'start_date'),
+    Input('date_filter', 'end_date'))
+def updateCumulativeDistanceGraph(start_date, end_date):
+    if not start_date or not end_date:
+        raise dash.exceptions.PreventUpdate
+    else:
+        # define date range
+        idx = pd.date_range(start_date, end_date)
+        # reindex
+        df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
+        return px.bar(data_frame=df_alldays['Distance'].cumsum(), y='Distance',
+            color_discrete_sequence=['#656EF2']*len(df_alldays))
 
 
 # ! MAIN ! #
