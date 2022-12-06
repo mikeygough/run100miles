@@ -53,15 +53,28 @@ total_hours = df['Time_m'].sum() / 60.
 # ! LAYOUT ! #
 app.layout = html.Div(children=[
     
-    html.H1(children='Run100Miles'),
+    html.H1(children='Run100Miles',
+            style={
+                'textAlign': 'center'
+            }),
 
-    html.H3(children='Pick a date range & see your running stats update automagically!'),
+    html.H3(children='Choose a daterange to update training stats:',
+            style={
+                'textAlign': 'center'
+            }),
 
+    html.Div(children=[
     dcc.DatePickerRange(id='date_filter',
                         start_date=df.index.min(),
                         end_date=df.index.max(),
                         min_date_allowed=df.index.min(),
-                        max_date_allowed=df.index.max()),
+                        max_date_allowed=df.index.max(),
+                        style={
+                        'width': '100%',
+                        'display': 'flex',
+                        'align-items': 'center',
+                        'justify-content': 'center'
+                        })]),
     
     # SUMMARY STATS
     html.H3(id='total_distance', 
