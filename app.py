@@ -139,7 +139,8 @@ def updateTotalDistance(start_date, end_date):
     if not start_date or not end_date:
         raise dash.exceptions.PreventUpdate
     else:
-        return 'Miles Ran: {}'.format(int(df[start_date:end_date]['Distance'].sum()))
+        total_ran = int(df[start_date:end_date]['Distance'].sum())
+        return f'Miles Ran: {total_ran:,.0f}'
 
 # Total Runs
 @app.callback(
@@ -150,7 +151,8 @@ def updateTotalRuns(start_date, end_date):
     if not start_date or not end_date:
         raise dash.exceptions.PreventUpdate
     else:
-        return 'Number of Runs: {}'.format(int(df[start_date:end_date][df['Distance'] > 0].shape[0]))
+        total_runs = int(df[start_date:end_date][df['Distance'] > 0].shape[0])
+        return f'Number of Runs: {total_runs:,.0f}'
 
 # Total Hours
 @app.callback(
