@@ -21,24 +21,31 @@ df['Time_m'] = df['Time_s'] / 60.
 # create the fig1 (distance)
 fig1 = px.line(data_frame=df, y='Distance',
                title='Runs by Distance...')
+fig1.update_yaxes(title_text='')
+fig1.update_xaxes(title_text='')
 
 # create the fig2 (cumulative distance)
 fig2 = px.bar(data_frame=df['Distance'].cumsum(), y='Distance',
               color_discrete_sequence=['#656EF2']*len(df),
-              title='Cumulative Distance Ran...')
+              title='Cumulative Miles Ran...')
+fig2.update_yaxes(title_text='')
+fig2.update_xaxes(title_text='')
 
 # create the fig3 (rolling weekly mileage)
 fig3 = px.line(data_frame=df['Distance'].rolling(7).sum(), y='Distance',
                title='Rolling Weekly Mileage...')
+fig3.update_yaxes(title_text='')
+fig3.update_xaxes(title_text='')
 
 # create the fig4 (rolling 30 day mileage)
 fig4 = px.line(data_frame=df['Distance'].rolling(30).sum(), y='Distance',
                title='Rolling Monthly Mileage...')
+fig4.update_yaxes(title_text='')
+fig4.update_xaxes(title_text='')
 
 total_ran = int(df['Distance'].sum())
 total_runs = int(df[df['Distance'] > 0].shape[0])
 total_hours = df['Time_m'].sum() / 60.
-# total_hours = total_hours.format('{:,.0f}'.format
 
 
 # ! LAYOUT ! #
@@ -56,11 +63,11 @@ app.layout = html.Div(children=[
     
     # SUMMARY STATS
     html.H3(id='total_distance', 
-             children='{} Miles Ran'.format(total_ran)),
+             children='Miles Ran: {}'.format(total_ran)),
     html.H3(id='total_runs', 
-             children='{} Runs'.format(total_runs)),
+             children='Number of Runs: {}'.format(total_runs)),
     html.H3(id='total_hours', 
-             children=f'{total_hours:,.0f} Hours Spent Running'),
+             children=f'Hours Spent Running: {total_hours:,.0f}'),
 
     # DATE PICKER
     html.Div(id='output-container-date-picker-range'),
@@ -90,7 +97,7 @@ def updateTotalDistance(start_date, end_date):
     if not start_date or not end_date:
         raise dash.exceptions.PreventUpdate
     else:
-        return '{} Miles Ran'.format(int(df[start_date:end_date]['Distance'].sum()))
+        return 'Miles Ran: {}'.format(int(df[start_date:end_date]['Distance'].sum()))
 
 # Total Runs
 @app.callback(
@@ -101,7 +108,7 @@ def updateTotalRuns(start_date, end_date):
     if not start_date or not end_date:
         raise dash.exceptions.PreventUpdate
     else:
-        return '{} Runs'.format(int(df[start_date:end_date][df['Distance'] > 0].shape[0]))
+        return 'Number of Runs: {}'.format(int(df[start_date:end_date][df['Distance'] > 0].shape[0]))
 
 # Total Hours
 @app.callback(
@@ -113,7 +120,7 @@ def updateTotalHours(start_date, end_date):
         raise dash.exceptions.PreventUpdate
     else:
         total_hours = int(df[start_date:end_date]['Time_m'].sum() / 60.)
-        return f'{total_hours:,.0f} Hours Spent Running'
+        return f'Hours Spent Running: {total_hours:,.0f}'
 
 # Distance Plot
 @app.callback(
@@ -128,8 +135,11 @@ def updateDistanceGraph(start_date, end_date):
         idx = pd.date_range(start_date, end_date)
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
-        return px.line(data_frame=df_alldays, y='Distance',
+        fig1 = px.line(data_frame=df_alldays, y='Distance',
                        title='Runs by Distance...')
+        fig1.update_yaxes(title_text='')
+        fig1.update_xaxes(title_text='')
+        return fig1
 
 # Cumulative Distance Plot
 @app.callback(
@@ -144,9 +154,12 @@ def updateCumulativeDistanceGraph(start_date, end_date):
         idx = pd.date_range(start_date, end_date)
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
-        return px.bar(data_frame=df_alldays['Distance'].cumsum(), y='Distance',
+        fig2 = px.bar(data_frame=df_alldays['Distance'].cumsum(), y='Distance',
                       color_discrete_sequence=['#656EF2']*len(df_alldays),
-                      title='Cumulative Distance Ran...')
+                      title='Cumulative Miles Ran...')
+        fig2.update_yaxes(title_text='')
+        fig2.update_xaxes(title_text='')
+        return fig2
 
 # Rolling Weekly Mileage
 @app.callback(
@@ -161,8 +174,11 @@ def updateRollingWeeklyMileageGraph(start_date, end_date):
         idx = pd.date_range(start_date, end_date)
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
-        return px.line(data_frame=df_alldays['Distance'].rolling(7).sum(), 
+        fig3 = px.line(data_frame=df_alldays['Distance'].rolling(7).sum(), 
                        y='Distance', title='Rolling Weekly Mileage...')
+        fig3.update_yaxes(title_text='')
+        fig3.update_xaxes(title_text='')
+        return fig3
 
 # Rolling Monthly Mileage
 @app.callback(
@@ -177,8 +193,11 @@ def updateRollingMonthlyMileageGraph(start_date, end_date):
         idx = pd.date_range(start_date, end_date)
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
-        return px.line(data_frame=df_alldays['Distance'].rolling(40).sum(),
+        fig4 = px.line(data_frame=df_alldays['Distance'].rolling(40).sum(),
                        y='Distance', title='Rolling Monthly Mileage...')
+        fig4.update_yaxes(title_text='')
+        fig4.update_xaxes(title_text='')
+        return fig4
 
 
 # ! MAIN ! #
