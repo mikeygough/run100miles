@@ -28,6 +28,9 @@ fig2 = px.bar(data_frame=df['Distance'].cumsum(), y='Distance',
 # create the fig3 (rolling weekly mileage)
 fig3 = px.line(data_frame=df['Distance'].rolling(7).sum(), y='Distance')
 
+# create the fig4 (rolling 30 day mileage)
+fig4 = px.line(data_frame=df['Distance'].rolling(30).sum(), y='Distance')
+
 total_ran = int(df['Distance'].sum())
 total_runs = int(df[df['Distance'] > 0].shape[0])
 total_hours = df['Time_m'].sum() / 60.
@@ -72,6 +75,9 @@ app.layout = html.Div(children=[
 
     dcc.Graph(id='graph3',
               figure=fig3),
+
+    dcc.Graph(id='graph4',
+              figure=fig4),
     ])
 
 
@@ -146,7 +152,7 @@ def updateCumulativeDistanceGraph(start_date, end_date):
     Output('graph3', 'figure'),
     Input('date_filter', 'start_date'),
     Input('date_filter', 'end_date'))
-def updateRollingMileageGraph(start_date, end_date):
+def updateRollingWeeklyMileageGraph(start_date, end_date):
     if not start_date or not end_date:
         raise dash.exceptions.PreventUpdate
     else:
@@ -155,6 +161,21 @@ def updateRollingMileageGraph(start_date, end_date):
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         return px.line(data_frame=df_alldays['Distance'].rolling(7).sum(), y='Distance')
+
+# Rolling Monthly Mileage
+@app.callback(
+    Output('graph4', 'figure'),
+    Input('date_filter', 'start_date'),
+    Input('date_filter', 'end_date'))
+def updateRollingMonthlyMileageGraph(start_date, end_date):
+    if not start_date or not end_date:
+        raise dash.exceptions.PreventUpdate
+    else:
+        # define date range
+        idx = pd.date_range(start_date, end_date)
+        # reindex
+        df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
+        return px.line(data_frame=df_alldays['Distance'].rolling(40).sum(), y='Distance')
 
 
 # ! MAIN ! #
