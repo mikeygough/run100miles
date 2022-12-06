@@ -19,17 +19,21 @@ df['Time_m'] = df['Time_s'] / 60.
 
 # ! GENERATE DATA ! #
 # create the fig1 (distance)
-fig1 = px.line(data_frame=df, y='Distance')
+fig1 = px.line(data_frame=df, y='Distance',
+               title='Runs by Distance...')
 
 # create the fig2 (cumulative distance)
 fig2 = px.bar(data_frame=df['Distance'].cumsum(), y='Distance',
-               color_discrete_sequence=['#656EF2']*len(df))
+              color_discrete_sequence=['#656EF2']*len(df),
+              title='Cumulative Distance Ran...')
 
 # create the fig3 (rolling weekly mileage)
-fig3 = px.line(data_frame=df['Distance'].rolling(7).sum(), y='Distance')
+fig3 = px.line(data_frame=df['Distance'].rolling(7).sum(), y='Distance',
+               title='Rolling Weekly Mileage...')
 
 # create the fig4 (rolling 30 day mileage)
-fig4 = px.line(data_frame=df['Distance'].rolling(30).sum(), y='Distance')
+fig4 = px.line(data_frame=df['Distance'].rolling(30).sum(), y='Distance',
+               title='Rolling Monthly Mileage...')
 
 total_ran = int(df['Distance'].sum())
 total_runs = int(df[df['Distance'] > 0].shape[0])
@@ -50,28 +54,23 @@ app.layout = html.Div(children=[
                         min_date_allowed=df.index.min(),
                         max_date_allowed=df.index.max()),
     
+    # SUMMARY STATS
     html.H3(id='total_distance', 
              children='{} Miles Ran'.format(total_ran)),
-
     html.H3(id='total_runs', 
              children='{} Runs'.format(total_runs)),
-
     html.H3(id='total_hours', 
              children=f'{total_hours:,.0f} Hours Spent Running'),
 
+    # DATE PICKER
     html.Div(id='output-container-date-picker-range'),
     
-    html.H3(children='Runs by Distance...'),
-
+    # GRAPHS
     dcc.Graph(id='graph1',
               figure=fig1),
 
-    html.H3(children='Cumulative Distance...'),
-
     dcc.Graph(id='graph2',
               figure=fig2),
-
-    html.H3(children='Rolling Weekly Mileage...'),
 
     dcc.Graph(id='graph3',
               figure=fig3),
@@ -129,7 +128,8 @@ def updateDistanceGraph(start_date, end_date):
         idx = pd.date_range(start_date, end_date)
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
-        return px.line(data_frame=df_alldays, y='Distance')
+        return px.line(data_frame=df_alldays, y='Distance',
+                       title='Runs by Distance...')
 
 # Cumulative Distance Plot
 @app.callback(
@@ -145,7 +145,8 @@ def updateCumulativeDistanceGraph(start_date, end_date):
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         return px.bar(data_frame=df_alldays['Distance'].cumsum(), y='Distance',
-            color_discrete_sequence=['#656EF2']*len(df_alldays))
+                      color_discrete_sequence=['#656EF2']*len(df_alldays),
+                      title='Cumulative Distance Ran...')
 
 # Rolling Weekly Mileage
 @app.callback(
@@ -160,7 +161,8 @@ def updateRollingWeeklyMileageGraph(start_date, end_date):
         idx = pd.date_range(start_date, end_date)
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
-        return px.line(data_frame=df_alldays['Distance'].rolling(7).sum(), y='Distance')
+        return px.line(data_frame=df_alldays['Distance'].rolling(7).sum(), 
+                       y='Distance', title='Rolling Weekly Mileage...')
 
 # Rolling Monthly Mileage
 @app.callback(
@@ -175,7 +177,8 @@ def updateRollingMonthlyMileageGraph(start_date, end_date):
         idx = pd.date_range(start_date, end_date)
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
-        return px.line(data_frame=df_alldays['Distance'].rolling(40).sum(), y='Distance')
+        return px.line(data_frame=df_alldays['Distance'].rolling(40).sum(),
+                       y='Distance', title='Rolling Monthly Mileage...')
 
 
 # ! MAIN ! #
