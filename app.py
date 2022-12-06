@@ -58,10 +58,12 @@ app.layout = html.Div(children=[
                 'textAlign': 'center'
             }),
 
-    html.H3(children='Choose a daterange to update training stats:',
+    html.H5(children='Choose a daterange to update training stats:',
             style={
                 'textAlign': 'center'
             }),
+
+    html.Br(),
 
     html.Div(children=[
     dcc.DatePickerRange(id='date_filter',
@@ -70,19 +72,44 @@ app.layout = html.Div(children=[
                         min_date_allowed=df.index.min(),
                         max_date_allowed=df.index.max(),
                         style={
-                        'width': '100%',
-                        'display': 'flex',
-                        'align-items': 'center',
-                        'justify-content': 'center'
+                            'width': '100%',
+                            'display': 'flex',
+                            'align-items': 'center',
+                            'justify-content': 'center'
                         })]),
+
+    html.Br(),
     
     # SUMMARY STATS
-    html.H3(id='total_distance', 
-             children='Miles Ran: {}'.format(total_ran)),
-    html.H3(id='total_runs', 
-             children='Number of Runs: {}'.format(total_runs)),
-    html.H3(id='total_hours', 
-             children=f'Hours Spent Running: {total_hours:,.0f}'),
+    html.Div(children=[
+    html.H5(id='total_distance', 
+            children='Miles Ran: {}'.format(total_ran),
+            style={
+                'width': '100%',
+                'display': 'flex',
+                'align-items': 'center',
+                'justify-content': 'center'
+            })]),
+
+    html.Div(children=[
+    html.H5(id='total_runs', 
+             children='Number of Runs: {}'.format(total_runs),
+            style={
+                'width': '100%',
+                'display': 'flex',
+                'align-items': 'center',
+                'justify-content': 'center'
+            })]),
+
+    html.Div(children=[
+    html.H5(id='total_hours', 
+             children=f'Hours Spent Running: {total_hours:,.0f}',
+            style={
+                'width': '100%',
+                'display': 'flex',
+                'align-items': 'center',
+                'justify-content': 'center'
+            })]),
 
     # DATE PICKER
     html.Div(id='output-container-date-picker-range'),
