@@ -12,6 +12,10 @@ df = pd.read_csv('data/numeric_data.csv', parse_dates=['Date'],
                          infer_datetime_format=True, index_col='Date',
                          thousands=',')
 
+print(df.head())
+
+# create minutes column
+df['Time_m'] = df['Time_s'] / 60.
 
 # ! GENERATE DATA ! #
 # create the fig1 (distance)
@@ -26,6 +30,8 @@ fig3 = px.line(data_frame=df['Distance'].rolling(7).sum(), y='Distance')
 
 total_ran = int(df['Distance'].sum())
 total_runs = int(df[df['Distance'] > 0].shape[0])
+total_hours = df['Time_m'].sum() / 60.
+# total_hours = total_hours.format('{:,.0f}'.format
 
 
 # ! LAYOUT ! #
@@ -46,6 +52,9 @@ app.layout = html.Div(children=[
 
     html.H3(id='total_runs', 
              children='{} Runs'.format(total_runs)),
+
+    html.H3(id='total_hours', 
+             children=f'{total_hours:,.0f} Hours Spent Running'),
 
     html.Div(id='output-container-date-picker-range'),
     
@@ -88,6 +97,18 @@ def updateTotalRuns(start_date, end_date):
         raise dash.exceptions.PreventUpdate
     else:
         return '{} Runs'.format(int(df[start_date:end_date][df['Distance'] > 0].shape[0]))
+
+# Total Hours
+@app.callback(
+    Output('total_hours', 'children'),
+    Input('date_filter', 'start_date'),
+    Input('date_filter', 'end_date'))
+def updateTotalHours(start_date, end_date):
+    if not start_date or not end_date:
+        raise dash.exceptions.PreventUpdate
+    else:
+        total_hours = int(df[start_date:end_date]['Time_m'].sum() / 60.)
+        return f'{total_hours:,.0f} Hours Spent Running'
 
 # Distance Plot
 @app.callback(
