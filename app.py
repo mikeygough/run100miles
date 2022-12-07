@@ -20,26 +20,26 @@ print(df.head())
 df['Time_m'] = df['Time_s'] / 60.
 
 # ! GENERATE DATA ! #
-# create the fig1 (distance)
+# fig1 (distance)
 fig1 = px.line(data_frame=df, y='Distance',
                title='Runs by Distance...')
 fig1.update_yaxes(title_text='')
 fig1.update_xaxes(title_text='')
 
-# create the fig2 (cumulative distance)
+# fig2 (cumulative distance)
 fig2 = px.bar(data_frame=df['Distance'].cumsum(), y='Distance',
               color_discrete_sequence=['#656EF2']*len(df),
               title='Cumulative Miles Ran...')
 fig2.update_yaxes(title_text='')
 fig2.update_xaxes(title_text='')
 
-# create the fig3 (rolling weekly mileage)
+# fig3 (rolling weekly mileage)
 fig3 = px.line(data_frame=df['Distance'].rolling(7).sum(), y='Distance',
                title='Rolling Weekly Mileage...')
 fig3.update_yaxes(title_text='')
 fig3.update_xaxes(title_text='')
 
-# create the fig4 (rolling 30 day mileage)
+# fig4 (rolling 30 day mileage)
 fig4 = px.line(data_frame=df['Distance'].rolling(30).sum(), y='Distance',
                title='Rolling Monthly Mileage...')
 fig4.update_yaxes(title_text='')
@@ -64,6 +64,27 @@ app.layout = html.Div(children=[
             }),
 
     html.Br(),
+
+    # test card
+    dbc.Card(
+        dbc.CardBody([
+            dbc.Row(
+                [
+                dbc.Col(['test'], width=3),
+                dbc.Col(['test'], width=3),
+                dbc.Col(['test'], width=3),
+                dbc.Col(['test'], width=3),
+                ], align='center')])),
+
+    dbc.Row([
+            dbc.Col([dcc.Graph(id='graph1', figure=fig1)], width=6),
+            dbc.Col([dcc.Graph(id='graph2', figure=fig2)], width=6),
+            ], align='center'),
+
+    dbc.Row([
+            dbc.Col([dcc.Graph(id='graph3', figure=fig3)], width=6),
+            dbc.Col([dcc.Graph(id='graph4', figure=fig4)], width=6),
+            ], align='center'),
 
     html.Div(children=[
     dcc.DatePickerRange(id='date_filter',
