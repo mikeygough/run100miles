@@ -83,22 +83,30 @@ app.layout = html.Div(children=[
 
     dbc.Row(
         [
-        dbc.Col([html.H5(id='total_distance', 
+        dbc.Col([dbc.CardBody(
+                id='total_distance',
                 children='Miles Ran: {}'.format(total_ran),
-                style={'text-align': 'center'})],
+                style={'text-align': 'center'},
+                className='card text-white bg-primary mb-3')],
                 width=3),
-        dbc.Col([html.H5(id='total_runs', 
+        dbc.Col([dbc.CardBody(
+                id='total_runs',
                 children='Number of Runs: {}'.format(total_runs),
-                style={'text-align': 'center'})],
+                style={'text-align': 'center'},
+                className='card text-white bg-primary mb-3')],
                 width=3),
-        dbc.Col([html.H5(id='total_hours', 
-                children=f'Hours Spent Running: {total_hours:,.0f}',
-                style={'text-align': 'center'})],
+        dbc.Col([dbc.CardBody(
+                id='total_hours',
+                children='Hours Spent Running: {}'.format(total_hours),
+                style={'text-align': 'center'},
+                className='card text-white bg-primary mb-3')],
                 width=3),
-        dbc.Col([html.H5(id='total_calories',
-                children=f'Calories Burned: {total_calories:,.0f}',
-                style={'text-align': 'center'})],
-                width=3),
+        dbc.Col([dbc.CardBody(
+                id='total_calories',
+                children='Calories Burned: {}'.format(total_calories),
+                style={'text-align': 'center'},
+                className='card text-white bg-primary mb-3')],
+                width=3)
         ], align='center'),
 
     html.Br(),
@@ -116,8 +124,8 @@ app.layout = html.Div(children=[
                 dbc.Col([dcc.Graph(id='graph4', figure=fig4)], width=6),
                 ], align='center')])),
 
-    html.Br()
-    
+    html.Br(),
+
     ])
 
 
