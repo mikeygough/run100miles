@@ -65,27 +65,8 @@ app.layout = html.Div(children=[
 
     html.Br(),
 
-    # test card
-    dbc.Card(
-        dbc.CardBody([
-            dbc.Row(
-                [
-                dbc.Col(['test'], width=3),
-                dbc.Col(['test'], width=3),
-                dbc.Col(['test'], width=3),
-                dbc.Col(['test'], width=3),
-                ], align='center')])),
-
-    dbc.Row([
-            dbc.Col([dcc.Graph(id='graph1', figure=fig1)], width=6),
-            dbc.Col([dcc.Graph(id='graph2', figure=fig2)], width=6),
-            ], align='center'),
-
-    dbc.Row([
-            dbc.Col([dcc.Graph(id='graph3', figure=fig3)], width=6),
-            dbc.Col([dcc.Graph(id='graph4', figure=fig4)], width=6),
-            ], align='center'),
-
+    # DATE PICKER
+    html.Div(id='output-container-date-picker-range'),
     html.Div(children=[
     dcc.DatePickerRange(id='date_filter',
                         start_date=df.index.min(),
@@ -100,7 +81,7 @@ app.layout = html.Div(children=[
                         })]),
 
     html.Br(),
-    
+
     # SUMMARY STATS
     html.Div(children=[
     html.H5(id='total_distance', 
@@ -132,21 +113,21 @@ app.layout = html.Div(children=[
                 'justify-content': 'center'
             })]),
 
-    # DATE PICKER
-    html.Div(id='output-container-date-picker-range'),
+    dbc.Card(
+        dbc.CardBody([
+            dbc.Row(
+                [
+                dbc.Col([dcc.Graph(id='graph1', figure=fig1)], width=6),
+                dbc.Col([dcc.Graph(id='graph2', figure=fig2)], width=6),
+                ], align='center'),
+            dbc.Row(
+                [
+                dbc.Col([dcc.Graph(id='graph3', figure=fig3)], width=6),
+                dbc.Col([dcc.Graph(id='graph4', figure=fig4)], width=6),
+                ], align='center')])),
+
+    html.Br()
     
-    # GRAPHS
-    dcc.Graph(id='graph1',
-              figure=fig1),
-
-    dcc.Graph(id='graph2',
-              figure=fig2),
-
-    dcc.Graph(id='graph3',
-              figure=fig3),
-
-    dcc.Graph(id='graph4',
-              figure=fig4),
     ])
 
 
