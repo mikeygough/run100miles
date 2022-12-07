@@ -14,8 +14,6 @@ df = pd.read_csv('data/numeric_data.csv', parse_dates=['Date'],
                          infer_datetime_format=True, index_col='Date',
                          thousands=',')
 
-print(df.head())
-
 # create minutes column
 df['Time_m'] = df['Time_s'] / 60.
 
@@ -48,6 +46,7 @@ fig4.update_xaxes(title_text='')
 total_ran = int(df['Distance'].sum())
 total_runs = int(df[df['Distance'] > 0].shape[0])
 total_hours = df['Time_m'].sum() / 60.
+total_calories = df['Calories'].sum()
 
 
 # ! LAYOUT ! #
@@ -82,36 +81,27 @@ app.layout = html.Div(children=[
 
     html.Br(),
 
-    # SUMMARY STATS
-    html.Div(children=[
-    html.H5(id='total_distance', 
-            children='Miles Ran: {}'.format(total_ran),
-            style={
-                'width': '100%',
-                'display': 'flex',
-                'align-items': 'center',
-                'justify-content': 'center'
-            })]),
+    dbc.Row(
+        [
+        dbc.Col([html.H5(id='total_distance', 
+                children='Miles Ran: {}'.format(total_ran),
+                style={'text-align': 'center'})],
+                width=3),
+        dbc.Col([html.H5(id='total_runs', 
+                children='Number of Runs: {}'.format(total_runs),
+                style={'text-align': 'center'})],
+                width=3),
+        dbc.Col([html.H5(id='total_hours', 
+                children=f'Hours Spent Running: {total_hours:,.0f}',
+                style={'text-align': 'center'})],
+                width=3),
+        dbc.Col([html.H5(id='total_calories',
+                children=f'Calories Burned: {total_calories:,.0f}',
+                style={'text-align': 'center'})],
+                width=3),
+        ], align='center'),
 
-    html.Div(children=[
-    html.H5(id='total_runs', 
-             children='Number of Runs: {}'.format(total_runs),
-            style={
-                'width': '100%',
-                'display': 'flex',
-                'align-items': 'center',
-                'justify-content': 'center'
-            })]),
-
-    html.Div(children=[
-    html.H5(id='total_hours', 
-             children=f'Hours Spent Running: {total_hours:,.0f}',
-            style={
-                'width': '100%',
-                'display': 'flex',
-                'align-items': 'center',
-                'justify-content': 'center'
-            })]),
+    html.Br(),
 
     dbc.Card(
         dbc.CardBody([
@@ -167,6 +157,18 @@ def updateTotalHours(start_date, end_date):
     else:
         total_hours = int(df[start_date:end_date]['Time_m'].sum() / 60.)
         return f'Hours Spent Running: {total_hours:,.0f}'
+
+# Total Calories
+@app.callback(
+    Output('total_calories', 'children'),
+    Input('date_filter', 'start_date'),
+    Input('date_filter', 'end_date'))
+def updateTotalCalories(start_date, end_date):
+    if not start_date or not end_date:
+        raise dash.exceptions.PreventUpdate
+    else:
+        total_calories = int(df[start_date:end_date]['Calories'].sum())
+        return f'Calories Burned: {total_calories:,.0f}'
 
 # Distance Plot
 @app.callback(
