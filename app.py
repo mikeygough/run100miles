@@ -7,6 +7,7 @@ import pandas as pd
 
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.LITERA])
+# app.css.append({'external_url': 'static/styles.css'})
 
 
 # ! LOAD (numeric) DATA ! #
@@ -60,7 +61,8 @@ total_calories = df['Calories'].sum()
 
 
 # ! LAYOUT ! #
-app.layout = html.Div(children=[
+app.layout = dbc.Container(
+    html.Div(children=[
     
     html.H1(children='Run100Miles',
             style={
@@ -76,67 +78,142 @@ app.layout = html.Div(children=[
 
     # DATE PICKER
     html.Div(id='output-container-date-picker-range'),
-    html.Div(children=[
-    dcc.DatePickerRange(id='date_filter',
+    # html.Div(children=[
+    # dcc.DatePickerRange(id='date_filter',
+    #                     start_date=df.index.min(),
+    #                     end_date=df.index.max(),
+    #                     min_date_allowed=df.index.min(),
+    #                     max_date_allowed=df.index.max(),
+    #                     style={
+    #                         'width': '100%',
+    #                         'display': 'flex',
+    #                         'align-items': 'center',
+    #                         'justify-content': 'center'
+    #                     })]),
+
+    # SUMMARY STATS
+    # dbc.Row(
+    #     [
+    #     dbc.Col([dbc.CardBody(
+    #             id='total_distance',
+    #             children='Miles Ran: {}'.format(total_ran),
+    #             style={'text-align': 'center'},
+    #             className='card text-white bg-primary mb-3')],
+    #             width=3),
+    #     dbc.Col([dbc.CardBody(
+    #             id='total_runs',
+    #             children='Number of Runs: {}'.format(total_runs),
+    #             style={'text-align': 'center'},
+    #             className='card text-white bg-primary mb-3')],
+    #             width=3),
+    #     dbc.Col([dbc.CardBody(
+    #             id='total_hours',
+    #             children='Hours Spent Running: {}'.format(total_hours),
+    #             style={'text-align': 'center'},
+    #             className='card text-white bg-primary mb-3')],
+    #             width=3),
+    #     dbc.Col([dbc.CardBody(
+    #             id='total_calories',
+    #             children='Calories Burned: {}'.format(total_calories),
+    #             style={'text-align': 'center'},
+    #             className='card text-white bg-primary mb-3')],
+    #             width=3)
+    #     ], align='center'),
+
+    html.Br(),
+
+    html.Div(dbc.Row(
+            [
+            dbc.Col([
+                    dbc.CardBody(
+                        dcc.DatePickerRange(id='date_filter',
                         start_date=df.index.min(),
                         end_date=df.index.max(),
                         min_date_allowed=df.index.min(),
                         max_date_allowed=df.index.max(),
-                        style={
-                            'width': '100%',
-                            'display': 'flex',
-                            'align-items': 'center',
-                            'justify-content': 'center'
-                        })]),
+                        display_format='MMMM, YY'),
+                        style={'text-align': 'center',
+                               'color': 'black'},
+                        className='card text-white bg-dark mb-3'),
+                    dbc.CardBody(id='total_distance',
+                    children='Miles Ran: {}'.format(total_ran),
+                    style={'text-align': 'center'},
+                    className='card text-white bg-primary mb-3'),
+                    dbc.CardBody(
+                    id='total_runs',
+                    children='Number of Runs: {}'.format(total_runs),
+                    style={'text-align': 'center'},
+                    className='card text-white bg-primary mb-3'),
+                    dbc.CardBody(
+                    id='total_hours',
+                    children='Hours Spent Running: {}'.format(total_hours),
+                    style={'text-align': 'center'},
+                    className='card text-white bg-primary mb-3'),
+                    dbc.CardBody(
+                    id='total_calories',
+                    children='Calories Burned: {}'.format(total_calories),
+                    style={'text-align': 'center'},
+                    className='card text-white bg-primary mb-3')
+                    ], width=3),
+            dbc.Col(dbc.Card(
+                            dcc.Graph(id='graph1', figure=fig1)), width=9)
+            ], align='center')),
 
-    html.Br(),
-
-    dbc.Row(
-        [
-        dbc.Col([dbc.CardBody(
-                id='total_distance',
-                children='Miles Ran: {}'.format(total_ran),
-                style={'text-align': 'center'},
-                className='card text-white bg-primary mb-3')],
-                width=3),
-        dbc.Col([dbc.CardBody(
-                id='total_runs',
-                children='Number of Runs: {}'.format(total_runs),
-                style={'text-align': 'center'},
-                className='card text-white bg-primary mb-3')],
-                width=3),
-        dbc.Col([dbc.CardBody(
-                id='total_hours',
-                children='Hours Spent Running: {}'.format(total_hours),
-                style={'text-align': 'center'},
-                className='card text-white bg-primary mb-3')],
-                width=3),
-        dbc.Col([dbc.CardBody(
-                id='total_calories',
-                children='Calories Burned: {}'.format(total_calories),
-                style={'text-align': 'center'},
-                className='card text-white bg-primary mb-3')],
-                width=3)
-        ], align='center'),
-
-    html.Br(),
+    html.Div(
+        dbc.Card(
+            dbc.CardBody([
+                dbc.Row(
+                    dbc.Col(dcc.Graph(id='graph3', figure=fig3),
+                                      width={'size': 10})
+                    , justify='center', align='center')
+                ])), style={'border-radius': '20px', 'padding': '40px'}
+    ),
 
     dbc.Card(
         dbc.CardBody([
-            dbc.Row(
-                [
-                dbc.Col([dcc.Graph(id='graph1', figure=fig1)], width=6),
-                dbc.Col([dcc.Graph(id='graph2', figure=fig2)], width=6),
-                ], align='center'),
-            dbc.Row(
-                [
-                dbc.Col([dcc.Graph(id='graph3', figure=fig3)], width=6),
-                dbc.Col([dcc.Graph(id='graph4', figure=fig4)], width=6),
-                ], align='center')])),
+            dbc.Row([
+                dbc.Col([dcc.Graph(id='graph2', figure=fig2)], width=8)
+            ])
+        ])
+    ),
+
+
+
+
+    # html.Div(
+    #     dbc.Card(
+    #         dbc.CardBody([
+    #             dbc.Row(
+    #                 dbc.Col(dcc.Graph(id='graph1', figure=fig1),
+    #                                   width={'size': 10})
+    #                 , justify='center', align='center')
+    #             ])), style={'border-radies': '20px', 'padding': '40px'}
+    # ),
+
+    # dbc.Card(
+    #     dbc.CardBody([
+    #         dbc.Row([
+    #             dbc.Col([dcc.Graph(id='graph2', figure=fig2)], width=8)
+    #         ])
+    #     ])
+    # ),
+
+
+            
+
+            # dbc.Row(
+            #     [
+            #     dbc.Col([dcc.Graph(id='graph2', figure=fig2)], width=6)
+            #     ], align='center'),
+            # dbc.Row(
+            #     [
+            #     dbc.Col([dcc.Graph(id='graph3', figure=fig3)], width=6),
+            #     dbc.Col([dcc.Graph(id='graph4', figure=fig4)], width=6),
+            #     ], align='center')])),
 
     html.Br(),
 
-    ])
+    ]), fluid=True)
 
 
 # ! CALLBACKS ! #
@@ -201,8 +278,7 @@ def updateDistanceGraph(start_date, end_date):
         idx = pd.date_range(start_date, end_date)
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
-        fig1 = px.line(data_frame=df_alldays, y='Distance',
-                       title='Runs by Distance...')
+        fig1 = px.line(data_frame=df_alldays, y='Distance')
         fig1.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
                   plot_bgcolor = 'rgba(0,0,0,0)')
         fig1.update_yaxes(title_text='')
