@@ -19,8 +19,12 @@ df['Time_m'] = df['Time_s'] / 60.
 
 # ! GENERATE DATA ! #
 # fig1 (distance)
+# fig1 = px.line(data_frame=df, y='Distance',
+#                title='Runs by Distance...')
 fig1 = px.line(data_frame=df, y='Distance',
                title='Runs by Distance...')
+fig1.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
+                  plot_bgcolor = 'rgba(0,0,0,0)')
 fig1.update_yaxes(title_text='')
 fig1.update_xaxes(title_text='')
 
@@ -28,18 +32,24 @@ fig1.update_xaxes(title_text='')
 fig2 = px.bar(data_frame=df['Distance'].cumsum(), y='Distance',
               color_discrete_sequence=['#656EF2']*len(df),
               title='Cumulative Miles Ran...')
+fig2.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
+                  plot_bgcolor = 'rgba(0,0,0,0)')
 fig2.update_yaxes(title_text='')
 fig2.update_xaxes(title_text='')
 
 # fig3 (rolling weekly mileage)
 fig3 = px.line(data_frame=df['Distance'].rolling(7).sum(), y='Distance',
                title='Rolling Weekly Mileage...')
+fig3.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
+                  plot_bgcolor = 'rgba(0,0,0,0)')
 fig3.update_yaxes(title_text='')
 fig3.update_xaxes(title_text='')
 
 # fig4 (rolling 30 day mileage)
 fig4 = px.line(data_frame=df['Distance'].rolling(30).sum(), y='Distance',
                title='Rolling Monthly Mileage...')
+fig4.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
+                  plot_bgcolor = 'rgba(0,0,0,0)')
 fig4.update_yaxes(title_text='')
 fig4.update_xaxes(title_text='')
 
@@ -193,6 +203,8 @@ def updateDistanceGraph(start_date, end_date):
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         fig1 = px.line(data_frame=df_alldays, y='Distance',
                        title='Runs by Distance...')
+        fig1.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
+                  plot_bgcolor = 'rgba(0,0,0,0)')
         fig1.update_yaxes(title_text='')
         fig1.update_xaxes(title_text='')
         return fig1
@@ -213,6 +225,8 @@ def updateCumulativeDistanceGraph(start_date, end_date):
         fig2 = px.bar(data_frame=df_alldays['Distance'].cumsum(), y='Distance',
                       color_discrete_sequence=['#656EF2']*len(df_alldays),
                       title='Cumulative Miles Ran...')
+        fig2.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
+                  plot_bgcolor = 'rgba(0,0,0,0)')
         fig2.update_yaxes(title_text='')
         fig2.update_xaxes(title_text='')
         return fig2
@@ -232,6 +246,8 @@ def updateRollingWeeklyMileageGraph(start_date, end_date):
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         fig3 = px.line(data_frame=df_alldays['Distance'].rolling(7).sum(), 
                        y='Distance', title='Rolling Weekly Mileage...')
+        fig3.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
+                  plot_bgcolor = 'rgba(0,0,0,0)')
         fig3.update_yaxes(title_text='')
         fig3.update_xaxes(title_text='')
         return fig3
@@ -251,6 +267,8 @@ def updateRollingMonthlyMileageGraph(start_date, end_date):
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         fig4 = px.line(data_frame=df_alldays['Distance'].rolling(40).sum(),
                        y='Distance', title='Rolling Monthly Mileage...')
+        fig4.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
+                  plot_bgcolor = 'rgba(0,0,0,0)')
         fig4.update_yaxes(title_text='')
         fig4.update_xaxes(title_text='')
         return fig4
