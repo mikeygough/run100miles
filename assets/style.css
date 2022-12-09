@@ -1,0 +1,31 @@
+body {
+    margin: 0;
+    font-family: 'Lato', sans-serif;
+    background-color: rgba(0, 62, 193, 0.03);
+}
+
+.mantine-10tol26 {
+    text-align: center;
+}
+
+.graph-card-title {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 1.3rem;
+    font-weight: 550;
+    font-family: 'Lato', sans-serif;
+}
+
+.card-title {
+    text-align: left;
+    font-size: 1.1rem;
+    font-weight: 300;
+    font-family: 'Lato', sans-serif;
+}
+
+.card-text {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 550;
+    font-family: 'Lato', sans-serif;
+}

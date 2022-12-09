@@ -9,11 +9,9 @@ import dash_mantine_components as dmc
 import plotly.express as px
 import pandas as pd
 
-external_stylesheets = [dbc.themes.LITERA, 'assets/styles.css']
+external_stylesheets = [dbc.themes.LITERA]
 
 app = Dash(__name__, external_stylesheets=external_stylesheets)
-# app.css.append({'external_url': 'static/styles.css'})
-
 
 # ! LOAD (numeric) DATA ! #
 df = pd.read_csv('data/numeric_data.csv', parse_dates=['Date'],
@@ -22,32 +20,30 @@ df = pd.read_csv('data/numeric_data.csv', parse_dates=['Date'],
 
 # create minutes column
 df['Time_m'] = df['Time_s'] / 60.
+# create 7 and 30 day rolling sum
+df['7d'] = df['Distance'].rolling(7).sum()
+df['30d'] = df['Distance'].rolling(30).sum()
 
 # ! GENERATE DATA ! #
 # fig1 (distance)
-# fig1 = px.line(data_frame=df, y='Distance',
-#                title='Runs by Distance...')
-fig1 = px.line(data_frame=df, y='Distance',
-               title='Runs by Distance...')
-fig1.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
-                  plot_bgcolor = 'rgba(0,0,0,0)')
+fig1 = px.line(data_frame=df, y='Distance')
+fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)',
+                   plot_bgcolor='rgba(0,0,0,0)')
 fig1.update_yaxes(title_text='')
 fig1.update_xaxes(title_text='')
 
 # fig2 (cumulative distance)
 fig2 = px.bar(data_frame=df['Distance'].cumsum(), y='Distance',
-              color_discrete_sequence=['#656EF2']*len(df),
-              title='Cumulative Miles Ran...')
-fig2.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
-                  plot_bgcolor = 'rgba(0,0,0,0)')
+              color_discrete_sequence=['#656EF2']*len(df))
+fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)',
+                  plot_bgcolor='rgba(0,0,0,0)')
 fig2.update_yaxes(title_text='')
 fig2.update_xaxes(title_text='')
 
 # fig3 (rolling weekly mileage)
-fig3 = px.line(data_frame=df['Distance'].rolling(7).sum(), y='Distance',
-               title='Rolling Weekly Mileage...')
-fig3.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
-                  plot_bgcolor = 'rgba(0,0,0,0)')
+fig3 = px.line(data_frame=df, y=['7d', '30d'])
+fig3.update_layout(paper_bgcolor='rgba(0,0,0,0)',
+                  plot_bgcolor='rgba(0,0,0,0)')
 fig3.update_yaxes(title_text='')
 fig3.update_xaxes(title_text='')
 
@@ -72,21 +68,21 @@ end_date = df.index.max()
 app.layout = dbc.Container(
     html.Div(children=[
     
-    html.H1(children='Run100Miles',
-            style={
-                'textAlign': 'center'
-            }),
+        html.H1(children='Run100Miles',
+                style={
+                    'textAlign': 'center'
+                }),
 
-    html.H5(children='Choose a daterange to update training stats:',
-            style={
-                'textAlign': 'center'
-            }),
+        html.H5(children='Choose a daterange to update training stats:',
+                style={
+                    'textAlign': 'center'
+                }),
 
-    html.Br(),
+        html.Br(),
 
-    html.Div(dbc.Row(
-            [
-            dbc.Col([
+        html.Div(
+            dbc.Row(
+                dbc.Col(
                     dbc.CardBody(
                         dmc.DateRangePicker(
                             id='date_filter',
@@ -94,86 +90,77 @@ app.layout = dbc.Container(
                             minDate=df.index.min(),
                             maxDate=df.index.max(),
                             icon=[DashIconify(icon="clarity:date-line")],
-                            size='sm'),
-                        className='card text-white bg-dark mb-3'),
-                    dbc.CardBody(
-                        id='total_distance',
-                        children='Miles Ran: {}'.format(total_ran),
-                        style={'text-align': 'center'},
-                        className='card text-white bg-primary mb-3'),
-                    dbc.CardBody(
-                        id='total_runs',
-                        children='Number of Runs: {}'.format(total_runs),
-                        style={'text-align': 'center'},
-                        className='card text-white bg-primary mb-3'),
-                    dbc.CardBody(
-                        id='total_hours',
-                        children='Hours Spent Running: {}'.format(total_hours),
-                        style={'text-align': 'center'},
-                        className='card text-white bg-primary mb-3'),
-                    dbc.CardBody(
-                        id='total_calories',
-                        children='Calories Burned: {}'.format(total_calories),
-                        style={'text-align': 'center'},
-                        className='card text-white bg-primary mb-3')
-                    ], width=3),
-            dbc.Col(dbc.Card(
-                            dcc.Graph(id='graph1', figure=fig1)), width=9)
-            ], align='center')),
+                            size='lg'),
+                        className='card border-dark mb-3'),
+                    width=4),
+                justify='center', align='center')),
 
-    html.Div(
-        dbc.Card(
-            dbc.CardBody([
-                dbc.Row(
-                    dbc.Col(dcc.Graph(id='graph3', figure=fig3),
-                                      width={'size': 10})
-                    , justify='center', align='center')
-                ])), style={'border-radius': '20px', 'padding': '40px'}
-    ),
+        html.Div(dbc.Row(
+                [
+                dbc.Col([
+                        dbc.CardBody(
+                            [
+                                html.H6('Miles Run...', 
+                                        className='card-title'),
+                                html.P('{}'.format(total_ran),
+                                       className='card-text',
+                                       id='total_distance')
+                            ], className='card text-white bg-primary mb-3'),
+                        dbc.CardBody(
+                            [
+                                html.H6('Number of Runs...',
+                                        className='card-title'),
+                                html.P('{}'.format(total_runs),
+                                        className='card-text',
+                                        id='total_runs')
+                            ], className='card text-white bg-primary mb-3'),
+                        dbc.CardBody(
+                            [
+                                html.H6('Hours Spent Running...',
+                                        className='card-title'),
+                                html.P('{}'.format(total_hours),
+                                        className='card-text',
+                                        id='total_hours')
+                            ], className='card text-white bg-primary mb-3'),
+                        dbc.CardBody(
+                            [
+                                html.H6('Calories Burned...',
+                                        className='card-title'),
+                                html.P('{}'.format(total_calories),
+                                        className='card-text',
+                                        id='total_calories')
+                            ], className='card text-white bg-primary mb-3'),
+                        ], width=3),
+                dbc.Col([
+                        dbc.Card([
+                            html.H6('Runs by Distance',
+                                    className='graph-card-title'),
+                            dcc.Graph(id='graph1', figure=fig1)
+                            ])
+                        ], width=9)
+                ], align='center'),
+        style={'border-radius': '20px', 'padding': '10px'}),
 
-    dbc.Card(
-        dbc.CardBody([
-            dbc.Row([
-                dbc.Col([dcc.Graph(id='graph2', figure=fig2)], width=8)
-            ])
-        ])
-    ),
+        html.Div(dbc.Row(
+            [
+            dbc.Col([
+                dbc.Card([
+                    html.H6('Rolling Weekly and Monthly Sum',
+                            className='graph-card-title'),
+                    dcc.Graph(id='graph3', figure=fig3)
+                    ])
+                ], width=6),
+            dbc.Col([
+                dbc.Card([
+                    html.H6('Cumulative Distance',
+                            className='graph-card-title'),
+                    dcc.Graph(id='graph2', figure=fig2)
+                    ])
+                ], width=6)
+            ], align='center'),
+        style={'border-radius': '0px', 'padding': '10px'}),
 
-
-
-
-    # html.Div(
-    #     dbc.Card(
-    #         dbc.CardBody([
-    #             dbc.Row(
-    #                 dbc.Col(dcc.Graph(id='graph1', figure=fig1),
-    #                                   width={'size': 10})
-    #                 , justify='center', align='center')
-    #             ])), style={'border-radies': '20px', 'padding': '40px'}
-    # ),
-
-    # dbc.Card(
-    #     dbc.CardBody([
-    #         dbc.Row([
-    #             dbc.Col([dcc.Graph(id='graph2', figure=fig2)], width=8)
-    #         ])
-    #     ])
-    # ),
-
-
-            
-
-            # dbc.Row(
-            #     [
-            #     dbc.Col([dcc.Graph(id='graph2', figure=fig2)], width=6)
-            #     ], align='center'),
-            # dbc.Row(
-            #     [
-            #     dbc.Col([dcc.Graph(id='graph3', figure=fig3)], width=6),
-            #     dbc.Col([dcc.Graph(id='graph4', figure=fig4)], width=6),
-            #     ], align='center')])),
-
-    html.Br(),
+        html.Br(),
 
     ]), fluid=True)
 
@@ -188,7 +175,7 @@ def updateTotalDistance(value):
         raise dash.exceptions.PreventUpdate
     else:
         total_ran = int(df[value[0]:value[1]]['Distance'].sum())
-        return f'Miles Ran: {total_ran:,.0f}'
+        return f'{total_ran:,.0f}'
 
 # Total Runs
 @app.callback(
@@ -199,7 +186,7 @@ def updateTotalRuns(value):
         raise dash.exceptions.PreventUpdate
     else:
         total_runs = int(df[value[0]:value[1]][df['Distance'] > 0].shape[0])
-        return f'Number of Runs: {total_runs:,.0f}'
+        return f'{total_runs:,.0f}'
 
 # Total Hours
 @app.callback(
@@ -210,7 +197,7 @@ def updateTotalHours(value):
         raise dash.exceptions.PreventUpdate
     else:
         total_hours = int(df[value[0]:value[1]]['Time_m'].sum() / 60.)
-        return f'Hours Spent Running: {total_hours:,.0f}'
+        return f'{total_hours:,.0f}'
 
 # Total Calories
 @app.callback(
@@ -221,7 +208,7 @@ def updateTotalCalories(value):
         raise dash.exceptions.PreventUpdate
     else:
         total_calories = int(df[value[0]:value[1]]['Calories'].sum())
-        return f'Calories Burned: {total_calories:,.0f}'
+        return f'{total_calories:,.0f}'
 
 # Distance Plot
 @app.callback(
@@ -255,8 +242,7 @@ def updateCumulativeDistanceGraph(value):
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         fig2 = px.bar(data_frame=df_alldays['Distance'].cumsum(), y='Distance',
-                      color_discrete_sequence=['#656EF2']*len(df_alldays),
-                      title='Cumulative Miles Ran...')
+                      color_discrete_sequence=['#656EF2']*len(df_alldays))
         fig2.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
                   plot_bgcolor = 'rgba(0,0,0,0)')
         fig2.update_yaxes(title_text='')
@@ -275,33 +261,37 @@ def updateRollingWeeklyMileageGraph(value):
         idx = pd.date_range(value[0], value[1])
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
-        fig3 = px.line(data_frame=df_alldays['Distance'].rolling(7).sum(), 
-                       y='Distance', title='Rolling Weekly Mileage...')
+
+        df_alldays['7d'] = df_alldays['Distance'].rolling(7).sum()
+        df_alldays['30d'] = df_alldays['Distance'].rolling(30).sum()
+
+        fig3 = px.line(data_frame=df_alldays, 
+                       y=['7d', '30d'])
         fig3.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
                   plot_bgcolor = 'rgba(0,0,0,0)')
         fig3.update_yaxes(title_text='')
         fig3.update_xaxes(title_text='')
         return fig3
 
-# Rolling Monthly Mileage
-@app.callback(
-    Output('graph4', 'figure'),
-    Input('date_filter', 'value'))
-def updateRollingMonthlyMileageGraph(value):
-    if not value:
-        raise dash.exceptions.PreventUpdate
-    else:
-        # define date range
-        idx = pd.date_range(value[0], value[1])
-        # reindex
-        df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
-        fig4 = px.line(data_frame=df_alldays['Distance'].rolling(40).sum(),
-                       y='Distance', title='Rolling Monthly Mileage...')
-        fig4.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
-                  plot_bgcolor = 'rgba(0,0,0,0)')
-        fig4.update_yaxes(title_text='')
-        fig4.update_xaxes(title_text='')
-        return fig4
+# # Rolling Monthly Mileage
+# @app.callback(
+#     Output('graph4', 'figure'),
+#     Input('date_filter', 'value'))
+# def updateRollingMonthlyMileageGraph(value):
+#     if not value:
+#         raise dash.exceptions.PreventUpdate
+#     else:
+#         # define date range
+#         idx = pd.date_range(value[0], value[1])
+#         # reindex
+#         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
+#         fig4 = px.line(data_frame=df_alldays['Distance'].rolling(40).sum(),
+#                        y='Distance', title='Rolling Monthly Mileage...')
+#         fig4.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
+#                   plot_bgcolor = 'rgba(0,0,0,0)')
+#         fig4.update_yaxes(title_text='')
+#         fig4.update_xaxes(title_text='')
+#         return fig4
 
 
 # ! MAIN ! #
