@@ -3,12 +3,13 @@ from datetime import datetime, timedelta, date
 from dash import Dash, html, dcc
 from dash.exceptions import PreventUpdate
 from dash.dependencies import Input, Output
+from dash_iconify import DashIconify
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 import plotly.express as px
 import pandas as pd
 
-external_stylesheets = [dbc.themes.LITERA]
+external_stylesheets = [dbc.themes.LITERA, 'assets/styles.css']
 
 app = Dash(__name__, external_stylesheets=external_stylesheets)
 # app.css.append({'external_url': 'static/styles.css'})
@@ -83,81 +84,38 @@ app.layout = dbc.Container(
 
     html.Br(),
 
-    # DATE PICKER
-    html.Div(id='output-container-date-picker-range'),
-    # html.Div(children=[
-    # dcc.DatePickerRange(id='date_filter',
-    #                     start_date=df.index.min(),
-    #                     end_date=df.index.max(),
-    #                     min_date_allowed=df.index.min(),
-    #                     max_date_allowed=df.index.max(),
-    #                     style={
-    #                         'width': '100%',
-    #                         'display': 'flex',
-    #                         'align-items': 'center',
-    #                         'justify-content': 'center'
-    #                     })]),
-
-    # SUMMARY STATS
-    # dbc.Row(
-    #     [
-    #     dbc.Col([dbc.CardBody(
-    #             id='total_distance',
-    #             children='Miles Ran: {}'.format(total_ran),
-    #             style={'text-align': 'center'},
-    #             className='card text-white bg-primary mb-3')],
-    #             width=3),
-    #     dbc.Col([dbc.CardBody(
-    #             id='total_runs',
-    #             children='Number of Runs: {}'.format(total_runs),
-    #             style={'text-align': 'center'},
-    #             className='card text-white bg-primary mb-3')],
-    #             width=3),
-    #     dbc.Col([dbc.CardBody(
-    #             id='total_hours',
-    #             children='Hours Spent Running: {}'.format(total_hours),
-    #             style={'text-align': 'center'},
-    #             className='card text-white bg-primary mb-3')],
-    #             width=3),
-    #     dbc.Col([dbc.CardBody(
-    #             id='total_calories',
-    #             children='Calories Burned: {}'.format(total_calories),
-    #             style={'text-align': 'center'},
-    #             className='card text-white bg-primary mb-3')],
-    #             width=3)
-    #     ], align='center'),
-
-    html.Br(),
-
     html.Div(dbc.Row(
             [
             dbc.Col([
                     dbc.CardBody(
-                        dmc.DateRangePicker(id='date_filter',
-                        value=[start_date, end_date],
-                        minDate=df.index.min(),
-                        maxDate=df.index.max()),
-                        style={'text-align': 'center'},
+                        dmc.DateRangePicker(
+                            id='date_filter',
+                            value=[start_date, end_date],
+                            minDate=df.index.min(),
+                            maxDate=df.index.max(),
+                            icon=[DashIconify(icon="clarity:date-line")],
+                            size='sm'),
                         className='card text-white bg-dark mb-3'),
-                    dbc.CardBody(id='total_distance',
-                    children='Miles Ran: {}'.format(total_ran),
-                    style={'text-align': 'center'},
-                    className='card text-white bg-primary mb-3'),
                     dbc.CardBody(
-                    id='total_runs',
-                    children='Number of Runs: {}'.format(total_runs),
-                    style={'text-align': 'center'},
-                    className='card text-white bg-primary mb-3'),
+                        id='total_distance',
+                        children='Miles Ran: {}'.format(total_ran),
+                        style={'text-align': 'center'},
+                        className='card text-white bg-primary mb-3'),
                     dbc.CardBody(
-                    id='total_hours',
-                    children='Hours Spent Running: {}'.format(total_hours),
-                    style={'text-align': 'center'},
-                    className='card text-white bg-primary mb-3'),
+                        id='total_runs',
+                        children='Number of Runs: {}'.format(total_runs),
+                        style={'text-align': 'center'},
+                        className='card text-white bg-primary mb-3'),
                     dbc.CardBody(
-                    id='total_calories',
-                    children='Calories Burned: {}'.format(total_calories),
-                    style={'text-align': 'center'},
-                    className='card text-white bg-primary mb-3')
+                        id='total_hours',
+                        children='Hours Spent Running: {}'.format(total_hours),
+                        style={'text-align': 'center'},
+                        className='card text-white bg-primary mb-3'),
+                    dbc.CardBody(
+                        id='total_calories',
+                        children='Calories Burned: {}'.format(total_calories),
+                        style={'text-align': 'center'},
+                        className='card text-white bg-primary mb-3')
                     ], width=3),
             dbc.Col(dbc.Card(
                             dcc.Graph(id='graph1', figure=fig1)), width=9)
