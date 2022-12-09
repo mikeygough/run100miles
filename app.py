@@ -136,7 +136,7 @@ app.layout = dbc.Container(
                             html.H6('Runs by Distance',
                                     className='graph-card-title'),
                             dcc.Graph(id='graph1', figure=fig1)
-                            ])
+                            ], className='graph-card')
                         ], width=9)
                 ], align='center'),
         style={'border-radius': '20px', 'padding': '10px'}),
@@ -148,14 +148,14 @@ app.layout = dbc.Container(
                     html.H6('Rolling Weekly and Monthly Sum',
                             className='graph-card-title'),
                     dcc.Graph(id='graph3', figure=fig3)
-                    ])
+                    ], className='graph-card')
                 ], width=6),
             dbc.Col([
                 dbc.Card([
                     html.H6('Cumulative Distance',
                             className='graph-card-title'),
                     dcc.Graph(id='graph2', figure=fig2)
-                    ])
+                    ], className='graph-card')
                 ], width=6)
             ], align='center'),
         style={'border-radius': '0px', 'padding': '10px'}),

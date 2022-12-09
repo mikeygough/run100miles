@@ -29,3 +29,10 @@ body {
     font-weight: 550;
     font-family: 'Lato', sans-serif;
 }
+
+.card {
+    box-shadow: rgb(0 0 0 / 5%) 0px 1px 3px, 
+                rgb(0 0 0 / 5%) 0px 36px 28px -7px,
+                rgb(0 0 0 / 4%) 0px 17px 17px -7px;
+    border: 1px solid rgb(233, 236, 239);
+}
