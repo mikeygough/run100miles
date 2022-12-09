@@ -1,12 +1,16 @@
 # test dash dashboard
+from datetime import datetime, timedelta, date
 from dash import Dash, html, dcc
+from dash.exceptions import PreventUpdate
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
+import dash_mantine_components as dmc
 import plotly.express as px
 import pandas as pd
 
+external_stylesheets = [dbc.themes.LITERA]
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.LITERA])
+app = Dash(__name__, external_stylesheets=external_stylesheets)
 # app.css.append({'external_url': 'static/styles.css'})
 
 
@@ -58,6 +62,9 @@ total_ran = int(df['Distance'].sum())
 total_runs = int(df[df['Distance'] > 0].shape[0])
 total_hours = df['Time_m'].sum() / 60.
 total_calories = df['Calories'].sum()
+
+start_date = df.index.min()
+end_date = df.index.max()
 
 
 # ! LAYOUT ! #
@@ -126,14 +133,11 @@ app.layout = dbc.Container(
             [
             dbc.Col([
                     dbc.CardBody(
-                        dcc.DatePickerRange(id='date_filter',
-                        start_date=df.index.min(),
-                        end_date=df.index.max(),
-                        min_date_allowed=df.index.min(),
-                        max_date_allowed=df.index.max(),
-                        display_format='MMMM, YY'),
-                        style={'text-align': 'center',
-                               'color': 'black'},
+                        dmc.DateRangePicker(id='date_filter',
+                        value=[start_date, end_date],
+                        minDate=df.index.min(),
+                        maxDate=df.index.max()),
+                        style={'text-align': 'center'},
                         className='card text-white bg-dark mb-3'),
                     dbc.CardBody(id='total_distance',
                     children='Miles Ran: {}'.format(total_ran),
@@ -220,62 +224,57 @@ app.layout = dbc.Container(
 # Total Distance
 @app.callback(
     Output('total_distance', 'children'),
-    Input('date_filter', 'start_date'),
-    Input('date_filter', 'end_date'))
-def updateTotalDistance(start_date, end_date):
-    if not start_date or not end_date:
+    Input('date_filter', 'value'))
+def updateTotalDistance(value):
+    if not value:
         raise dash.exceptions.PreventUpdate
     else:
-        total_ran = int(df[start_date:end_date]['Distance'].sum())
+        total_ran = int(df[value[0]:value[1]]['Distance'].sum())
         return f'Miles Ran: {total_ran:,.0f}'
 
 # Total Runs
 @app.callback(
     Output('total_runs', 'children'),
-    Input('date_filter', 'start_date'),
-    Input('date_filter', 'end_date'))
-def updateTotalRuns(start_date, end_date):
-    if not start_date or not end_date:
+    Input('date_filter', 'value'))
+def updateTotalRuns(value):
+    if not value:
         raise dash.exceptions.PreventUpdate
     else:
-        total_runs = int(df[start_date:end_date][df['Distance'] > 0].shape[0])
+        total_runs = int(df[value[0]:value[1]][df['Distance'] > 0].shape[0])
         return f'Number of Runs: {total_runs:,.0f}'
 
 # Total Hours
 @app.callback(
     Output('total_hours', 'children'),
-    Input('date_filter', 'start_date'),
-    Input('date_filter', 'end_date'))
-def updateTotalHours(start_date, end_date):
-    if not start_date or not end_date:
+    Input('date_filter', 'value'))
+def updateTotalHours(value):
+    if not value:
         raise dash.exceptions.PreventUpdate
     else:
-        total_hours = int(df[start_date:end_date]['Time_m'].sum() / 60.)
+        total_hours = int(df[value[0]:value[1]]['Time_m'].sum() / 60.)
         return f'Hours Spent Running: {total_hours:,.0f}'
 
 # Total Calories
 @app.callback(
     Output('total_calories', 'children'),
-    Input('date_filter', 'start_date'),
-    Input('date_filter', 'end_date'))
-def updateTotalCalories(start_date, end_date):
-    if not start_date or not end_date:
+    Input('date_filter', 'value'))
+def updateTotalCalories(value):
+    if not value:
         raise dash.exceptions.PreventUpdate
     else:
-        total_calories = int(df[start_date:end_date]['Calories'].sum())
+        total_calories = int(df[value[0]:value[1]]['Calories'].sum())
         return f'Calories Burned: {total_calories:,.0f}'
 
 # Distance Plot
 @app.callback(
     Output('graph1', 'figure'),
-    Input('date_filter', 'start_date'),
-    Input('date_filter', 'end_date'))
-def updateDistanceGraph(start_date, end_date):
-    if not start_date or not end_date:
+    Input('date_filter', 'value'))
+def updateDistanceGraph(value):
+    if not value:
         raise dash.exceptions.PreventUpdate
     else:
         # define date range
-        idx = pd.date_range(start_date, end_date)
+        idx = pd.date_range(value[0], value[1])
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         fig1 = px.line(data_frame=df_alldays, y='Distance')
@@ -288,14 +287,13 @@ def updateDistanceGraph(start_date, end_date):
 # Cumulative Distance Plot
 @app.callback(
     Output('graph2', 'figure'),
-    Input('date_filter', 'start_date'),
-    Input('date_filter', 'end_date'))
-def updateCumulativeDistanceGraph(start_date, end_date):
-    if not start_date or not end_date:
+    Input('date_filter', 'value'))
+def updateCumulativeDistanceGraph(value):
+    if not value:
         raise dash.exceptions.PreventUpdate
     else:
         # define date range
-        idx = pd.date_range(start_date, end_date)
+        idx = pd.date_range(value[0], value[1])
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         fig2 = px.bar(data_frame=df_alldays['Distance'].cumsum(), y='Distance',
@@ -310,14 +308,13 @@ def updateCumulativeDistanceGraph(start_date, end_date):
 # Rolling Weekly Mileage
 @app.callback(
     Output('graph3', 'figure'),
-    Input('date_filter', 'start_date'),
-    Input('date_filter', 'end_date'))
-def updateRollingWeeklyMileageGraph(start_date, end_date):
-    if not start_date or not end_date:
+    Input('date_filter', 'value'))
+def updateRollingWeeklyMileageGraph(value):
+    if not value:
         raise dash.exceptions.PreventUpdate
     else:
         # define date range
-        idx = pd.date_range(start_date, end_date)
+        idx = pd.date_range(value[0], value[1])
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         fig3 = px.line(data_frame=df_alldays['Distance'].rolling(7).sum(), 
@@ -331,14 +328,13 @@ def updateRollingWeeklyMileageGraph(start_date, end_date):
 # Rolling Monthly Mileage
 @app.callback(
     Output('graph4', 'figure'),
-    Input('date_filter', 'start_date'),
-    Input('date_filter', 'end_date'))
-def updateRollingMonthlyMileageGraph(start_date, end_date):
-    if not start_date or not end_date:
+    Input('date_filter', 'value'))
+def updateRollingMonthlyMileageGraph(value):
+    if not value:
         raise dash.exceptions.PreventUpdate
     else:
         # define date range
-        idx = pd.date_range(start_date, end_date)
+        idx = pd.date_range(value[0], value[1])
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         fig4 = px.line(data_frame=df_alldays['Distance'].rolling(40).sum(),
