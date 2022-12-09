@@ -1,14 +1,16 @@
 body {
     margin: 0;
-    font-family: 'Lato', sans-serif;
+    font-family: 'Times New Roman';
     background-color: rgba(0, 62, 193, 0.03);
 }
 
 .mantine-10tol26 {
     text-align: center;
+    font-family: 'Times New Roman';
 }
 
 .graph-card-title {
+    font-family: 'Times New Roman';
     text-align: center;
     margin-top: 15px;
     font-size: 1.3rem;
@@ -17,6 +19,7 @@ body {
 }
 
 .card-title {
+    font-family: 'Times New Roman';
     text-align: left;
     font-size: 1.1rem;
     font-weight: 300;
@@ -24,6 +27,7 @@ body {
 }
 
 .card-text {
+    font-family: 'Times New Roman';
     text-align: center;
     font-size: 1.3rem;
     font-weight: 550;
@@ -31,6 +35,7 @@ body {
 }
 
 .card {
+    font-family: 'Times New Roman';
     box-shadow: rgb(0 0 0 / 5%) 0px 1px 3px, 
                 rgb(0 0 0 / 5%) 0px 36px 28px -7px,
                 rgb(0 0 0 / 4%) 0px 17px 17px -7px;

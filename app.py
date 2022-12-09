@@ -24,11 +24,12 @@ df['Time_m'] = df['Time_s'] / 60.
 df['7d'] = df['Distance'].rolling(7).sum()
 df['30d'] = df['Distance'].rolling(30).sum()
 
-# ! GENERATE DATA ! #
+# ! GENERATE PLOTS AND FIGS ! #
 # fig1 (distance)
 fig1 = px.line(data_frame=df, y='Distance')
 fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)',
-                   plot_bgcolor='rgba(0,0,0,0)')
+                   plot_bgcolor='rgba(0,0,0,0)',
+                   font_family='Times New Roman')
 fig1.update_yaxes(title_text='')
 fig1.update_xaxes(title_text='')
 
@@ -36,14 +37,16 @@ fig1.update_xaxes(title_text='')
 fig2 = px.bar(data_frame=df['Distance'].cumsum(), y='Distance',
               color_discrete_sequence=['#656EF2']*len(df))
 fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)',
-                  plot_bgcolor='rgba(0,0,0,0)')
+                  plot_bgcolor='rgba(0,0,0,0)',
+                  font_family='Times New Roman')
 fig2.update_yaxes(title_text='')
 fig2.update_xaxes(title_text='')
 
 # fig3 (rolling weekly mileage)
 fig3 = px.line(data_frame=df, y=['7d', '30d'])
 fig3.update_layout(paper_bgcolor='rgba(0,0,0,0)',
-                  plot_bgcolor='rgba(0,0,0,0)')
+                  plot_bgcolor='rgba(0,0,0,0)',
+                  font_family='Times New Roman')
 fig3.update_yaxes(title_text='')
 fig3.update_xaxes(title_text='')
 
@@ -51,7 +54,8 @@ fig3.update_xaxes(title_text='')
 fig4 = px.line(data_frame=df['Distance'].rolling(30).sum(), y='Distance',
                title='Rolling Monthly Mileage...')
 fig4.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
-                  plot_bgcolor = 'rgba(0,0,0,0)')
+                  plot_bgcolor = 'rgba(0,0,0,0)',
+                  font_family='Times New Roman')
 fig4.update_yaxes(title_text='')
 fig4.update_xaxes(title_text='')
 
@@ -105,7 +109,7 @@ app.layout = dbc.Container(
                                 html.P('{}'.format(total_ran),
                                        className='card-text',
                                        id='total_distance')
-                            ], className='card text-white bg-primary mb-3'),
+                            ], className='card bg-light mb-3'),
                         dbc.CardBody(
                             [
                                 html.H6('Number of Runs...',
@@ -113,7 +117,7 @@ app.layout = dbc.Container(
                                 html.P('{}'.format(total_runs),
                                         className='card-text',
                                         id='total_runs')
-                            ], className='card text-white bg-primary mb-3'),
+                            ], className='card bg-light mb-3'),
                         dbc.CardBody(
                             [
                                 html.H6('Hours Spent Running...',
@@ -121,7 +125,7 @@ app.layout = dbc.Container(
                                 html.P('{}'.format(total_hours),
                                         className='card-text',
                                         id='total_hours')
-                            ], className='card text-white bg-primary mb-3'),
+                            ], className='card bg-light mb-3'),
                         dbc.CardBody(
                             [
                                 html.H6('Calories Burned...',
@@ -129,7 +133,7 @@ app.layout = dbc.Container(
                                 html.P('{}'.format(total_calories),
                                         className='card-text',
                                         id='total_calories')
-                            ], className='card text-white bg-primary mb-3'),
+                            ], className='card bg-light mb-3'),
                         ], width=3),
                 dbc.Col([
                         dbc.Card([
@@ -224,7 +228,8 @@ def updateDistanceGraph(value):
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         fig1 = px.line(data_frame=df_alldays, y='Distance')
         fig1.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
-                  plot_bgcolor = 'rgba(0,0,0,0)')
+                           plot_bgcolor = 'rgba(0,0,0,0)',
+                           font_family='Times New Roman')
         fig1.update_yaxes(title_text='')
         fig1.update_xaxes(title_text='')
         return fig1
@@ -244,7 +249,8 @@ def updateCumulativeDistanceGraph(value):
         fig2 = px.bar(data_frame=df_alldays['Distance'].cumsum(), y='Distance',
                       color_discrete_sequence=['#656EF2']*len(df_alldays))
         fig2.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
-                  plot_bgcolor = 'rgba(0,0,0,0)')
+                           plot_bgcolor = 'rgba(0,0,0,0)',
+                           font_family='Times New Roman')
         fig2.update_yaxes(title_text='')
         fig2.update_xaxes(title_text='')
         return fig2
@@ -268,7 +274,8 @@ def updateRollingWeeklyMileageGraph(value):
         fig3 = px.line(data_frame=df_alldays, 
                        y=['7d', '30d'])
         fig3.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
-                  plot_bgcolor = 'rgba(0,0,0,0)')
+                           plot_bgcolor = 'rgba(0,0,0,0)',
+                           font_family='Times New Roman')
         fig3.update_yaxes(title_text='')
         fig3.update_xaxes(title_text='')
         return fig3
