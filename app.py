@@ -7,7 +7,10 @@ from dash_iconify import DashIconify
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 import plotly.express as px
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 import pandas as pd
+
 
 external_stylesheets = [dbc.themes.LITERA]
 
@@ -26,7 +29,7 @@ df['30d'] = df['Distance'].rolling(30).sum()
 
 # ! GENERATE PLOTS AND FIGS ! #
 # fig1 (distance)
-fig1 = px.line(data_frame=df, y='Distance')
+fig1 = px.area(data_frame=df, y='Distance')
 fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)',
                    plot_bgcolor='rgba(0,0,0,0)',
                    font_family='Times New Roman')
@@ -43,10 +46,26 @@ fig2.update_yaxes(title_text='')
 fig2.update_xaxes(title_text='')
 
 # fig3 (rolling weekly mileage)
-fig3 = px.line(data_frame=df, y=['7d', '30d'])
+fig3 = make_subplots(specs=[
+    [{"secondary_y": True}]])
+
+# Add traces
+fig3.add_trace(
+    go.Line(x=df.index, 
+            y=df['7d'],
+            name="yaxis data"),
+    secondary_y=False)
+
+fig3.add_trace(
+    go.Line(x=df.index,
+            y=df['30d'],
+            name="yaxis2 data"),
+    secondary_y=True)
+
+# fig3 = px.line(data_frame=df, y=['7d', '30d'])
 fig3.update_layout(paper_bgcolor='rgba(0,0,0,0)',
-                  plot_bgcolor='rgba(0,0,0,0)',
-                  font_family='Times New Roman')
+                   plot_bgcolor='rgba(0,0,0,0)',
+                   font_family='Times New Roman')
 fig3.update_yaxes(title_text='')
 fig3.update_xaxes(title_text='')
 
@@ -226,7 +245,7 @@ def updateDistanceGraph(value):
         idx = pd.date_range(value[0], value[1])
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
-        fig1 = px.line(data_frame=df_alldays, y='Distance')
+        fig1 = px.area(data_frame=df_alldays, y='Distance')
         fig1.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
                            plot_bgcolor = 'rgba(0,0,0,0)',
                            font_family='Times New Roman')
@@ -271,8 +290,23 @@ def updateRollingWeeklyMileageGraph(value):
         df_alldays['7d'] = df_alldays['Distance'].rolling(7).sum()
         df_alldays['30d'] = df_alldays['Distance'].rolling(30).sum()
 
-        fig3 = px.line(data_frame=df_alldays, 
-                       y=['7d', '30d'])
+        fig3 = make_subplots(specs=[[{"secondary_y": True}]])
+
+        # Add traces
+        fig3.add_trace(
+            go.Line(x=df_alldays.index,
+                    y=df_alldays['7d'],
+                    name="yaxis data"),
+            secondary_y=False)
+
+        fig3.add_trace(
+            go.Line(x=df_alldays.index, 
+                    y=df_alldays['30d'],
+                    name="yaxis2 data"),
+            secondary_y=True)
+
+        # fig3 = px.line(data_frame=df_alldays, 
+        #                y=['7d', '30d'])
         fig3.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
                            plot_bgcolor = 'rgba(0,0,0,0)',
                            font_family='Times New Roman')
