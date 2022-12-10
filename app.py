@@ -33,7 +33,8 @@ fig1 = px.area(data_frame=df, y='Distance', height=400)
 fig1.update_traces(line_color='#1c9099')
 fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)',
                    plot_bgcolor='rgba(0,0,0,0)',
-                   font_family='Times New Roman')
+                   font_family='Times New Roman',
+                   margin=dict(l=10, r=10, t=10, b=10))
 fig1.update_yaxes(title_text='')
 fig1.update_xaxes(title_text='')
 
@@ -44,7 +45,8 @@ fig2 = px.bar(data_frame=df['Distance'].cumsum(), y='Distance',
               color_discrete_sequence=['#016c59']*len(df))
 fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)',
                    plot_bgcolor='rgba(0,0,0,0)',
-                   font_family='Times New Roman')
+                   font_family='Times New Roman',
+                   margin=dict(l=10, r=10, t=10, b=10))
 fig2.update_yaxes(title_text='')
 fig2.update_xaxes(title_text='')
 
@@ -73,7 +75,11 @@ fig3.add_trace(
 fig3.update_layout(height=400,
                    paper_bgcolor='rgba(0,0,0,0)',
                    plot_bgcolor='rgba(0,0,0,0)',
-                   font_family='Times New Roman')
+                   font_family='Times New Roman',
+                   margin=dict(l=10, r=10, t=10, b=10),
+                   legend=dict(orientation="h",
+                               yanchor="top", y=1.1,
+                               xanchor="left",x=0.01))
 fig3.update_yaxes(title_text='')
 fig3.update_xaxes(title_text='')
 
@@ -251,7 +257,8 @@ def updateDistanceGraph(value):
         fig1.update_traces(line_color='#1c9099')
         fig1.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
                            plot_bgcolor = 'rgba(0,0,0,0)',
-                           font_family='Times New Roman')
+                           font_family='Times New Roman',
+                           margin=dict(l=10, r=10, t=10, b=10))
         fig1.update_yaxes(title_text='')
         fig1.update_xaxes(title_text='')
         return fig1
@@ -273,7 +280,8 @@ def updateCumulativeDistanceGraph(value):
                       color_discrete_sequence=['#016c59']*len(df_alldays))
         fig2.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
                            plot_bgcolor = 'rgba(0,0,0,0)',
-                           font_family='Times New Roman')
+                           font_family='Times New Roman',
+                           margin=dict(l=10, r=10, t=10, b=10))
         fig2.update_yaxes(title_text='')
         fig2.update_xaxes(title_text='')
         return fig2
@@ -316,7 +324,11 @@ def updateRollingWeeklyMileageGraph(value):
         fig3.update_layout(height=400,
                            paper_bgcolor = 'rgba(0,0,0,0)',
                            plot_bgcolor = 'rgba(0,0,0,0)',
-                           font_family='Times New Roman')
+                           font_family='Times New Roman',
+                           margin=dict(l=10, r=10, t=10, b=10),
+                           legend=dict(orientation="h",
+                                       yanchor="top", y=1.1,
+                                       xanchor="left",x=0.01))
         fig3.update_yaxes(title_text='')
         fig3.update_xaxes(title_text='')
         return fig3
