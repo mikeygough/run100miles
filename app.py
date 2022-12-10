@@ -30,6 +30,7 @@ df['30d'] = df['Distance'].rolling(30).sum()
 # ! GENERATE PLOTS AND FIGS ! #
 # fig1 (distance)
 fig1 = px.area(data_frame=df, y='Distance')
+fig1.update_traces(line_color='#1c9099')
 fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)',
                    plot_bgcolor='rgba(0,0,0,0)',
                    font_family='Times New Roman')
@@ -38,7 +39,7 @@ fig1.update_xaxes(title_text='')
 
 # fig2 (cumulative distance)
 fig2 = px.bar(data_frame=df['Distance'].cumsum(), y='Distance',
-              color_discrete_sequence=['#656EF2']*len(df))
+              color_discrete_sequence=['#016c59']*len(df))
 fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)',
                   plot_bgcolor='rgba(0,0,0,0)',
                   font_family='Times New Roman')
@@ -47,19 +48,21 @@ fig2.update_xaxes(title_text='')
 
 # fig3 (rolling weekly mileage)
 fig3 = make_subplots(specs=[
-    [{"secondary_y": True}]])
+    [{'secondary_y': True}]])
 
 # Add traces
 fig3.add_trace(
     go.Line(x=df.index, 
             y=df['7d'],
-            name="yaxis data"),
+            line_color='#67a9cf',
+            name='Weekly Mileage'),
     secondary_y=False)
 
 fig3.add_trace(
     go.Line(x=df.index,
             y=df['30d'],
-            name="yaxis2 data"),
+            line_color='#014636',
+            name='Monthly Mileage'),
     secondary_y=True)
 
 # fig3 = px.line(data_frame=df, y=['7d', '30d'])
@@ -246,6 +249,7 @@ def updateDistanceGraph(value):
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         fig1 = px.area(data_frame=df_alldays, y='Distance')
+        fig1.update_traces(line_color='#1c9099')
         fig1.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
                            plot_bgcolor = 'rgba(0,0,0,0)',
                            font_family='Times New Roman')
@@ -266,7 +270,7 @@ def updateCumulativeDistanceGraph(value):
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         fig2 = px.bar(data_frame=df_alldays['Distance'].cumsum(), y='Distance',
-                      color_discrete_sequence=['#656EF2']*len(df_alldays))
+                      color_discrete_sequence=['#016c59']*len(df_alldays))
         fig2.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
                            plot_bgcolor = 'rgba(0,0,0,0)',
                            font_family='Times New Roman')
@@ -290,19 +294,21 @@ def updateRollingWeeklyMileageGraph(value):
         df_alldays['7d'] = df_alldays['Distance'].rolling(7).sum()
         df_alldays['30d'] = df_alldays['Distance'].rolling(30).sum()
 
-        fig3 = make_subplots(specs=[[{"secondary_y": True}]])
+        fig3 = make_subplots(specs=[[{'secondary_y': True}]])
 
         # Add traces
         fig3.add_trace(
             go.Line(x=df_alldays.index,
                     y=df_alldays['7d'],
-                    name="yaxis data"),
+                    line_color='#67a9cf',
+                    name='Weekly Mileage'),
             secondary_y=False)
 
         fig3.add_trace(
             go.Line(x=df_alldays.index, 
                     y=df_alldays['30d'],
-                    name="yaxis2 data"),
+                    line_color='#014636',
+                    name='Monthly Mileage'),
             secondary_y=True)
 
         # fig3 = px.line(data_frame=df_alldays, 
