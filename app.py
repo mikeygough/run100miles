@@ -1,4 +1,4 @@
-# test dash dashboard
+# imports
 from datetime import datetime, timedelta, date
 from dash import Dash, html, dcc
 from dash.exceptions import PreventUpdate
@@ -11,21 +11,21 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import pandas as pd
 
-
+# use stylesheet
 external_stylesheets = [dbc.themes.LITERA]
-
+# create app
 app = Dash(__name__, external_stylesheets=external_stylesheets)
-
 # ! LOAD (numeric) DATA ! #
-df = pd.read_csv('data/numeric_data.csv', parse_dates=['Date'],
-                         infer_datetime_format=True, index_col='Date',
-                         thousands=',')
+df = pd.read_csv('data/numeric_data.csv', 
+                 parse_dates=['Date'], infer_datetime_format=True, 
+                 index_col='Date', thousands=',')
 
 # create minutes column
 df['Time_m'] = df['Time_s'] / 60.
-# create 7 and 30 day rolling sum
+# create 7 and 30 day rolling sums
 df['7d'] = df['Distance'].rolling(7).sum()
 df['30d'] = df['Distance'].rolling(30).sum()
+
 
 # ! GENERATE PLOTS AND FIGS ! #
 # fig1 (distance)
@@ -37,50 +37,46 @@ fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)',
 fig1.update_yaxes(title_text='')
 fig1.update_xaxes(title_text='')
 
+
 # fig2 (cumulative distance)
 fig2 = px.bar(data_frame=df['Distance'].cumsum(), y='Distance',
               color_discrete_sequence=['#016c59']*len(df))
 fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)',
-                  plot_bgcolor='rgba(0,0,0,0)',
-                  font_family='Times New Roman')
+                   plot_bgcolor='rgba(0,0,0,0)',
+                   font_family='Times New Roman')
 fig2.update_yaxes(title_text='')
 fig2.update_xaxes(title_text='')
 
-# fig3 (rolling weekly mileage)
-fig3 = make_subplots(specs=[
-    [{'secondary_y': True}]])
 
-# Add traces
+# fig3 (rolling weekly and monthly mileage)
+# uses graph_object 'go'
+fig3 = make_subplots(specs=[
+                            [{'secondary_y': True}]
+                           ]
+                    )
+# add traces
+# 7d
 fig3.add_trace(
     go.Line(x=df.index, 
             y=df['7d'],
             line_color='#67a9cf',
             name='Weekly Mileage'),
     secondary_y=False)
-
+#30d
 fig3.add_trace(
     go.Line(x=df.index,
             y=df['30d'],
             line_color='#014636',
             name='Monthly Mileage'),
     secondary_y=True)
-
-# fig3 = px.line(data_frame=df, y=['7d', '30d'])
 fig3.update_layout(paper_bgcolor='rgba(0,0,0,0)',
                    plot_bgcolor='rgba(0,0,0,0)',
                    font_family='Times New Roman')
 fig3.update_yaxes(title_text='')
 fig3.update_xaxes(title_text='')
 
-# fig4 (rolling 30 day mileage)
-fig4 = px.line(data_frame=df['Distance'].rolling(30).sum(), y='Distance',
-               title='Rolling Monthly Mileage...')
-fig4.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
-                  plot_bgcolor = 'rgba(0,0,0,0)',
-                  font_family='Times New Roman')
-fig4.update_yaxes(title_text='')
-fig4.update_xaxes(title_text='')
 
+# descriptive statistics
 total_ran = int(df['Distance'].sum())
 total_runs = int(df[df['Distance'] > 0].shape[0])
 total_hours = df['Time_m'].sum() / 60.
@@ -94,18 +90,18 @@ end_date = df.index.max()
 app.layout = dbc.Container(
     html.Div(children=[
     
+        # top section
         html.H1(children='Run100Miles',
                 style={
                     'textAlign': 'center'
                 }),
-
         html.H5(children='Choose a daterange to update training stats:',
                 style={
                     'textAlign': 'center'
                 }),
-
         html.Br(),
 
+        # date picker
         html.Div(
             dbc.Row(
                 dbc.Col(
@@ -115,12 +111,13 @@ app.layout = dbc.Container(
                             value=[start_date, end_date],
                             minDate=df.index.min(),
                             maxDate=df.index.max(),
-                            icon=[DashIconify(icon="clarity:date-line")],
+                            icon=[DashIconify(icon='clarity:date-line')],
                             size='lg'),
                         className='card border-dark mb-3'),
                     width=4),
                 justify='center', align='center')),
 
+        # summary stats & runs plot
         html.Div(dbc.Row(
                 [
                 dbc.Col([
@@ -167,6 +164,7 @@ app.layout = dbc.Container(
                 ], align='center'),
         style={'border-radius': '20px', 'padding': '10px'}),
 
+        # rolling sum and cumulative distance plots
         html.Div(dbc.Row(
             [
             dbc.Col([
@@ -185,14 +183,13 @@ app.layout = dbc.Container(
                 ], width=6)
             ], align='center'),
         style={'border-radius': '0px', 'padding': '10px'}),
-
         html.Br(),
 
     ]), fluid=True)
 
 
 # ! CALLBACKS ! #
-# Total Distance
+# total distance
 @app.callback(
     Output('total_distance', 'children'),
     Input('date_filter', 'value'))
@@ -203,7 +200,7 @@ def updateTotalDistance(value):
         total_ran = int(df[value[0]:value[1]]['Distance'].sum())
         return f'{total_ran:,.0f}'
 
-# Total Runs
+# total runs
 @app.callback(
     Output('total_runs', 'children'),
     Input('date_filter', 'value'))
@@ -214,7 +211,7 @@ def updateTotalRuns(value):
         total_runs = int(df[value[0]:value[1]][df['Distance'] > 0].shape[0])
         return f'{total_runs:,.0f}'
 
-# Total Hours
+# total hours
 @app.callback(
     Output('total_hours', 'children'),
     Input('date_filter', 'value'))
@@ -225,7 +222,7 @@ def updateTotalHours(value):
         total_hours = int(df[value[0]:value[1]]['Time_m'].sum() / 60.)
         return f'{total_hours:,.0f}'
 
-# Total Calories
+# total calories
 @app.callback(
     Output('total_calories', 'children'),
     Input('date_filter', 'value'))
@@ -236,7 +233,7 @@ def updateTotalCalories(value):
         total_calories = int(df[value[0]:value[1]]['Calories'].sum())
         return f'{total_calories:,.0f}'
 
-# Distance Plot
+# distance plot
 @app.callback(
     Output('graph1', 'figure'),
     Input('date_filter', 'value'))
@@ -257,7 +254,7 @@ def updateDistanceGraph(value):
         fig1.update_xaxes(title_text='')
         return fig1
 
-# Cumulative Distance Plot
+# cumulative distance plot
 @app.callback(
     Output('graph2', 'figure'),
     Input('date_filter', 'value'))
@@ -278,7 +275,7 @@ def updateCumulativeDistanceGraph(value):
         fig2.update_xaxes(title_text='')
         return fig2
 
-# Rolling Weekly Mileage
+# rolling sums
 @app.callback(
     Output('graph3', 'figure'),
     Input('date_filter', 'value'))
@@ -319,26 +316,6 @@ def updateRollingWeeklyMileageGraph(value):
         fig3.update_yaxes(title_text='')
         fig3.update_xaxes(title_text='')
         return fig3
-
-# # Rolling Monthly Mileage
-# @app.callback(
-#     Output('graph4', 'figure'),
-#     Input('date_filter', 'value'))
-# def updateRollingMonthlyMileageGraph(value):
-#     if not value:
-#         raise dash.exceptions.PreventUpdate
-#     else:
-#         # define date range
-#         idx = pd.date_range(value[0], value[1])
-#         # reindex
-#         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
-#         fig4 = px.line(data_frame=df_alldays['Distance'].rolling(40).sum(),
-#                        y='Distance', title='Rolling Monthly Mileage...')
-#         fig4.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
-#                   plot_bgcolor = 'rgba(0,0,0,0)')
-#         fig4.update_yaxes(title_text='')
-#         fig4.update_xaxes(title_text='')
-#         return fig4
 
 
 # ! MAIN ! #
