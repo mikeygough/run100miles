@@ -29,7 +29,7 @@ df['30d'] = df['Distance'].rolling(30).sum()
 
 # ! GENERATE PLOTS AND FIGS ! #
 # fig1 (distance)
-fig1 = px.area(data_frame=df, y='Distance')
+fig1 = px.area(data_frame=df, y='Distance', height=400)
 fig1.update_traces(line_color='#1c9099')
 fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)',
                    plot_bgcolor='rgba(0,0,0,0)',
@@ -40,6 +40,7 @@ fig1.update_xaxes(title_text='')
 
 # fig2 (cumulative distance)
 fig2 = px.bar(data_frame=df['Distance'].cumsum(), y='Distance',
+              height=400,
               color_discrete_sequence=['#016c59']*len(df))
 fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)',
                    plot_bgcolor='rgba(0,0,0,0)',
@@ -69,7 +70,8 @@ fig3.add_trace(
             line_color='#014636',
             name='Monthly Mileage'),
     secondary_y=True)
-fig3.update_layout(paper_bgcolor='rgba(0,0,0,0)',
+fig3.update_layout(height=400,
+                   paper_bgcolor='rgba(0,0,0,0)',
                    plot_bgcolor='rgba(0,0,0,0)',
                    font_family='Times New Roman')
 fig3.update_yaxes(title_text='')
@@ -245,7 +247,7 @@ def updateDistanceGraph(value):
         idx = pd.date_range(value[0], value[1])
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
-        fig1 = px.area(data_frame=df_alldays, y='Distance')
+        fig1 = px.area(data_frame=df_alldays, y='Distance', height=400)
         fig1.update_traces(line_color='#1c9099')
         fig1.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
                            plot_bgcolor = 'rgba(0,0,0,0)',
@@ -267,6 +269,7 @@ def updateCumulativeDistanceGraph(value):
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         fig2 = px.bar(data_frame=df_alldays['Distance'].cumsum(), y='Distance',
+                      height=400,
                       color_discrete_sequence=['#016c59']*len(df_alldays))
         fig2.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
                            plot_bgcolor = 'rgba(0,0,0,0)',
@@ -310,7 +313,8 @@ def updateRollingWeeklyMileageGraph(value):
 
         # fig3 = px.line(data_frame=df_alldays, 
         #                y=['7d', '30d'])
-        fig3.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
+        fig3.update_layout(height=400,
+                           paper_bgcolor = 'rgba(0,0,0,0)',
                            plot_bgcolor = 'rgba(0,0,0,0)',
                            font_family='Times New Roman')
         fig3.update_yaxes(title_text='')
