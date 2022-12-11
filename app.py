@@ -109,29 +109,13 @@ app.layout = dbc.Container(
                 }),
         html.Br(),
 
-        # date picker
-        html.Div(
-            dbc.Row(
-                dbc.Col(
-                    dbc.CardBody(
-                        dmc.DateRangePicker(
-                            id='date_filter',
-                            value=[start_date, end_date],
-                            minDate=df.index.min(),
-                            maxDate=df.index.max(),
-                            icon=[DashIconify(icon='clarity:date-line')],
-                            size='lg'),
-                        className='card border-dark mb-3'),
-                    width=4),
-                justify='center', align='center')),
-
         # summary stats & runs plot
         html.Div(dbc.Row(
                 [
                 dbc.Col([
                         dbc.CardBody(
                             [
-                                html.H6('Miles Run...', 
+                                html.H6('Mile Count...', 
                                         className='card-title'),
                                 html.P('{}'.format(total_ran),
                                        className='card-text',
@@ -139,7 +123,7 @@ app.layout = dbc.Container(
                             ], className='card bg-light mb-3'),
                         dbc.CardBody(
                             [
-                                html.H6('Number of Runs...',
+                                html.H6('Run Count...',
                                         className='card-title'),
                                 html.P('{}'.format(total_runs),
                                         className='card-text',
@@ -147,7 +131,7 @@ app.layout = dbc.Container(
                             ], className='card bg-light mb-3'),
                         dbc.CardBody(
                             [
-                                html.H6('Hours Spent Running...',
+                                html.H6('Hour Count...',
                                         className='card-title'),
                                 html.P('{}'.format(total_hours),
                                         className='card-text',
@@ -155,20 +139,33 @@ app.layout = dbc.Container(
                             ], className='card bg-light mb-3'),
                         dbc.CardBody(
                             [
-                                html.H6('Calories Burned...',
+                                html.H6('Calorie Count...',
                                         className='card-title'),
                                 html.P('{}'.format(total_calories),
                                         className='card-text',
                                         id='total_calories')
                             ], className='card bg-light mb-3'),
-                        ], width=3),
+                        ], width=2),
                 dbc.Col([
                         dbc.Card([
-                            html.H6('Runs by Distance',
-                                    className='graph-card-title'),
+                            # html.H6('Runs by Distance',
+                            #         className='graph-card-title'),
+                            dbc.Row(
+                                dbc.Col(
+                                    dbc.CardBody(
+                                        dmc.DateRangePicker(
+                                            id='date_filter',
+                                            value=[start_date, end_date],
+                                            minDate=df.index.min(),
+                                            maxDate=df.index.max(),
+                                            icon=[DashIconify(icon='clarity:date-line')],
+                                            size='lg'),
+                                        className='card border-dark mb-3 my-date-range-picker-card'),
+                                    width=4),
+                                justify='left', align='left'),
                             dcc.Graph(id='graph1', figure=fig1)
                             ], className='graph-card')
-                        ], width=9)
+                        ], width=10)
                 ], align='center'),
         style={'border-radius': '20px', 'padding': '10px'}),
 
@@ -319,8 +316,6 @@ def updateRollingWeeklyMileageGraph(value):
                     name='Monthly Mileage'),
             secondary_y=True)
 
-        # fig3 = px.line(data_frame=df_alldays, 
-        #                y=['7d', '30d'])
         fig3.update_layout(height=400,
                            paper_bgcolor = 'rgba(0,0,0,0)',
                            plot_bgcolor = 'rgba(0,0,0,0)',

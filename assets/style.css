@@ -45,3 +45,10 @@ div {
                 rgb(0 0 0 / 4%) 0px 17px 17px -7px;
     border: 1px solid rgb(233, 236, 239);
 }
+
+.my-date-range-picker-card {
+    margin-left: 20px;
+    margin-top: 20px;
+    box-shadow: none;
+    border: 0px;
+}
