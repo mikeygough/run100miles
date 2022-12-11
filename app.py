@@ -83,6 +83,18 @@ fig3.update_layout(height=400,
 fig3.update_yaxes(title_text='')
 fig3.update_xaxes(title_text='')
 
+# fig4 (distance distribution)
+fig4 = px.histogram(data_frame=df, y='Distance',
+              height=400,
+              color_discrete_sequence=['#016c59']*len(df))
+fig4.update_layout(paper_bgcolor='rgba(0,0,0,0)',
+                   plot_bgcolor='rgba(0,0,0,0)',
+                   font_family='Times New Roman',
+                   margin=dict(l=10, r=10, t=10, b=10))
+fig4.update_yaxes(title_text='')
+fig4.update_xaxes(title_text='')
+
+
 
 # descriptive statistics
 total_ran = int(df['Distance'].sum())
@@ -189,6 +201,19 @@ app.layout = dbc.Container(
             ], align='center'),
         style={'border-radius': '0px', 'padding': '10px'}),
         html.Br(),
+
+        # histogram of run distance
+        html.Div(dbc.Row(
+            [
+            dbc.Col([
+                dbc.Card([
+                    html.H6('Distance Distribution',
+                            className='graph-card-title'),
+                    dcc.Graph(id='graph4', figure=fig4)
+                    ], className='graph-card')
+                ], width=5),
+            ], align='center'),
+        style={'border-radius': '0px', 'padding': '10px'})
 
     ]), fluid=True)
 
