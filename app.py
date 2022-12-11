@@ -84,7 +84,7 @@ fig3.update_yaxes(title_text='')
 fig3.update_xaxes(title_text='')
 
 # fig4 (distance distribution)
-fig4 = px.histogram(data_frame=df, y='Distance',
+fig4 = px.histogram(data_frame=df, x='Distance', nbins=50,
               height=400,
               color_discrete_sequence=['#016c59']*len(df))
 fig4.update_layout(paper_bgcolor='rgba(0,0,0,0)',
@@ -225,7 +225,7 @@ app.layout = dbc.Container(
     Input('date_filter', 'value'))
 def updateTotalDistance(value):
     if not value:
-        raise dash.exceptions.PreventUpdate
+        raise PreventUpdate
     else:
         total_ran = int(df[value[0]:value[1]]['Distance'].sum())
         return f'{total_ran:,.0f}'
@@ -236,7 +236,7 @@ def updateTotalDistance(value):
     Input('date_filter', 'value'))
 def updateTotalRuns(value):
     if not value:
-        raise dash.exceptions.PreventUpdate
+        raise PreventUpdate
     else:
         total_runs = int(df[value[0]:value[1]][df['Distance'] > 0].shape[0])
         return f'{total_runs:,.0f}'
@@ -247,7 +247,7 @@ def updateTotalRuns(value):
     Input('date_filter', 'value'))
 def updateTotalHours(value):
     if not value:
-        raise dash.exceptions.PreventUpdate
+        raise PreventUpdate
     else:
         total_hours = int(df[value[0]:value[1]]['Time_m'].sum() / 60.)
         return f'{total_hours:,.0f}'
@@ -258,7 +258,7 @@ def updateTotalHours(value):
     Input('date_filter', 'value'))
 def updateTotalCalories(value):
     if not value:
-        raise dash.exceptions.PreventUpdate
+        raise PreventUpdate
     else:
         total_calories = int(df[value[0]:value[1]]['Calories'].sum())
         return f'{total_calories:,.0f}'
@@ -269,7 +269,7 @@ def updateTotalCalories(value):
     Input('date_filter', 'value'))
 def updateDistanceGraph(value):
     if not value:
-        raise dash.exceptions.PreventUpdate
+        raise PreventUpdate
     else:
         # define date range
         idx = pd.date_range(value[0], value[1])
@@ -291,7 +291,7 @@ def updateDistanceGraph(value):
     Input('date_filter', 'value'))
 def updateCumulativeDistanceGraph(value):
     if not value:
-        raise dash.exceptions.PreventUpdate
+        raise PreventUpdate
     else:
         # define date range
         idx = pd.date_range(value[0], value[1])
@@ -314,7 +314,7 @@ def updateCumulativeDistanceGraph(value):
     Input('date_filter', 'value'))
 def updateRollingWeeklyMileageGraph(value):
     if not value:
-        raise dash.exceptions.PreventUpdate
+        raise PreventUpdate
     else:
         # define date range
         idx = pd.date_range(value[0], value[1])
@@ -352,6 +352,28 @@ def updateRollingWeeklyMileageGraph(value):
         fig3.update_yaxes(title_text='')
         fig3.update_xaxes(title_text='')
         return fig3
+
+# distance histogram
+@app.callback(
+    Output('graph4', 'figure'),
+    Input('date_filter', 'value'))
+def updateDistanceHistogram(value):
+    if not value:
+        raise PreventUpdate
+    else:
+        # define date range
+        idx = pd.date_range(value[0], value[1])
+        # reindex and plot
+        fig4 = px.histogram(data_frame=df.reindex(idx), x='Distance', nbins=50,
+                            height=400,
+                            color_discrete_sequence=['#016c59']*len(df))
+        fig4.update_layout(paper_bgcolor='rgba(0,0,0,0)',
+                           plot_bgcolor='rgba(0,0,0,0)',
+                           font_family='Times New Roman',
+                        margin=dict(l=10, r=10, t=10, b=10))
+        fig4.update_yaxes(title_text='')
+        fig4.update_xaxes(title_text='')
+        return fig4
 
 
 # ! MAIN ! #
