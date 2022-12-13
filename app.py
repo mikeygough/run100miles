@@ -30,7 +30,7 @@ df['30d'] = df['Distance'].rolling(30).sum()
 # ! GENERATE PLOTS AND FIGS ! #
 # fig1 (distance)
 fig1 = px.area(data_frame=df, y='Distance', height=400)
-fig1.update_traces(line_color='#1c9099')
+fig1.update_traces(line_color='#016c59')
 fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)',
                    plot_bgcolor='rgba(0,0,0,0)',
                    font_family='Times New Roman',
@@ -95,12 +95,14 @@ fig4.update_yaxes(title_text='')
 fig4.update_xaxes(title_text='')
 
 
-
 # descriptive statistics
 total_ran = int(df['Distance'].sum())
 total_runs = int(df[df['Distance'] > 0].shape[0])
 total_hours = df['Time_m'].sum() / 60.
 total_calories = df['Calories'].sum()
+average_distance = df['Distance'].mean()
+average_minutes = df['Time_m'].mean()
+print(df.head())
 
 start_date = df.index.min()
 end_date = df.index.max()
@@ -109,17 +111,6 @@ end_date = df.index.max()
 # ! LAYOUT ! #
 app.layout = dbc.Container(
     html.Div(children=[
-    
-        # top section
-        html.H1(children='Run100Miles',
-                style={
-                    'textAlign': 'center'
-                }),
-        html.H5(children='Choose a daterange to update training stats:',
-                style={
-                    'textAlign': 'center'
-                }),
-        html.Br(),
 
         # summary stats & runs plot
         html.Div(dbc.Row(
@@ -160,8 +151,8 @@ app.layout = dbc.Container(
                         ], width=2),
                 dbc.Col([
                         dbc.Card([
-                            # html.H6('Runs by Distance',
-                            #         className='graph-card-title'),
+                            html.H6('Time Series',
+                                    className='graph-card-title'),
                             dbc.Row(
                                 dbc.Col(
                                     dbc.CardBody(
@@ -186,7 +177,7 @@ app.layout = dbc.Container(
             [
             dbc.Col([
                 dbc.Card([
-                    html.H6('Rolling Weekly and Monthly Sum',
+                    html.H6('Rolling Weekly and Monthly Distance',
                             className='graph-card-title'),
                     dcc.Graph(id='graph3', figure=fig3)
                     ], className='graph-card')
@@ -202,18 +193,52 @@ app.layout = dbc.Container(
         style={'border-radius': '0px', 'padding': '10px'}),
         html.Br(),
 
-        # histogram of run distance
+        # additional summary stats & distance distribution
         html.Div(dbc.Row(
-            [
-            dbc.Col([
-                dbc.Card([
-                    html.H6('Distance Distribution',
-                            className='graph-card-title'),
-                    dcc.Graph(id='graph4', figure=fig4)
-                    ], className='graph-card')
-                ], width=5),
-            ], align='center'),
-        style={'border-radius': '0px', 'padding': '10px'})
+                [
+                dbc.Col([
+                        dbc.Card([
+                            html.H6('Distance Distribution',
+                                    className='graph-card-title'),
+                            dcc.Graph(id='graph4', figure=fig4)
+                            ], className='graph-card')
+                        ], width=9),
+                dbc.Col([
+                        dbc.CardBody(
+                            [
+                                html.H6('Average Run Duration (miles)...', 
+                                        className='card-title'),
+                                html.P('{}'.format(average_distance),
+                                       className='card-text',
+                                       id='average_distance')
+                            ], className='card bg-light mb-3'),
+                        dbc.CardBody(
+                            [
+                                html.H6('Average Run Duration (minutes)...',
+                                        className='card-title'),
+                                html.P('{}'.format(average_minutes),
+                                        className='card-text',
+                                        id='average_minutes')
+                            ], className='card bg-light mb-3'),
+                        # dbc.CardBody(
+                        #     [
+                        #         html.H6('Hour Count...',
+                        #                 className='card-title'),
+                        #         html.P('{}'.format(total_hours),
+                        #                 className='card-text',
+                        #                 id='total_hours')
+                        #     ], className='card bg-light mb-3'),
+                        # dbc.CardBody(
+                        #     [
+                        #         html.H6('Calorie Count...',
+                        #                 className='card-title'),
+                        #         html.P('{}'.format(total_calories),
+                        #                 className='card-text',
+                        #                 id='total_calories')
+                            # ], className='card bg-light mb-3'),
+                        ], width=3)
+                ], align='center'),
+        style={'border-radius': '20px', 'padding': '10px'}),
 
     ]), fluid=True)
 
@@ -263,6 +288,28 @@ def updateTotalCalories(value):
         total_calories = int(df[value[0]:value[1]]['Calories'].sum())
         return f'{total_calories:,.0f}'
 
+# average distance
+@app.callback(
+    Output('average_distance', 'children'),
+    Input('date_filter', 'value'))
+def updateAverageDistance(value):
+    if not value:
+        raise PreventUpdate
+    else:
+        average_distance = int(df[value[0]:value[1]]['Distance'].mean())
+        return f'{average_distance:,.0f}'
+
+# average minutes
+@app.callback(
+    Output('average_minutes', 'children'),
+    Input('date_filter', 'value'))
+def updateAverageMinutes(value):
+    if not value:
+        raise PreventUpdate
+    else:
+        average_minutes = int(df[value[0]:value[1]]['Time_m'].mean())
+        return f'{average_minutes:,.0f}'
+
 # distance plot
 @app.callback(
     Output('graph1', 'figure'),
@@ -276,7 +323,7 @@ def updateDistanceGraph(value):
         # reindex
         df_alldays = df.reindex(idx, fill_value=0).copy(deep=True)
         fig1 = px.area(data_frame=df_alldays, y='Distance', height=400)
-        fig1.update_traces(line_color='#1c9099')
+        fig1.update_traces(line_color='#016c59')
         fig1.update_layout(paper_bgcolor = 'rgba(0,0,0,0)',
                            plot_bgcolor = 'rgba(0,0,0,0)',
                            font_family='Times New Roman',
