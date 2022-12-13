@@ -166,8 +166,10 @@ app.layout = dbc.Container(
                                             icon=[DashIconify(icon='clarity:date-line')],
                                             size='lg'),
                                         className='card border-dark mb-3 my-date-range-picker-card'),
-                                    width=4),
-                                justify='left', align='left'),
+                                    width=4,
+                                    className='date-range-picker-col'),
+                                justify='left', align='left',
+                                className='date-range-picker-row'),
                             dcc.Graph(id='graph1', figure=fig1)
                             ], className='graph-card')
                         ], width=10)
@@ -179,7 +181,7 @@ app.layout = dbc.Container(
             [
             dbc.Col([
                 dbc.Card([
-                    html.H6('Rolling Weekly and Monthly Distance',
+                    html.H6('Rolling Weekly and Monthly Mileage',
                             className='graph-card-title'),
                     dcc.Graph(id='graph3', figure=fig3)
                     ], className='graph-card')
@@ -192,8 +194,7 @@ app.layout = dbc.Container(
                     ], className='graph-card')
                 ], width=6)
             ], align='center'),
-        style={'border-radius': '0px', 'padding': '10px'}),
-        html.Br(),
+        style={'border-radius': '20px', 'padding': '10px'}),
 
         # additional summary stats & distance
         html.Div(dbc.Row(

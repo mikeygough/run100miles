@@ -48,7 +48,15 @@ div {
 
 .my-date-range-picker-card {
     margin-left: 20px;
-    margin-top: 20px;
+    margin-top: 0px;
     box-shadow: none;
     border: 0px;
+}
+
+.date-range-picker-row {
+    margin-top: 0px;
+}
+
+.date-range-picker-col {
+    margin-top: 0px;
 }

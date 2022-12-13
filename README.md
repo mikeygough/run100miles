@@ -1,4 +1,7 @@
-## how long does it take to run 100 miles?
+# RUN 100 MILES
+#### Video Demo: xxx
+
+## about this project...
 
 sometime in 2018 a friend challenged me to run a half-marathon; 13.1 miles. i was not a runner. i had never run more than 5 miles in my life. so i started training and just before college graduation i finished my first race.
 
@@ -12,11 +15,26 @@ big goals take time and sacrifice and i’m lucky to have the chance to chase so
 
 i wore a running watch during most of my training and recently transformed this data into a science project. that project lives here. 
 
-read my story and see for yourself how i went from not-a-runner to 100-mile-finisher. 
+see for yourself how i went from not-a-runner to 100-mile-finisher. 
 
 ***
 
-#### five tips on running your first ultra:
+#### stack...
+
+run100miles uses real training data from a gps watch i used while training. the data was exported from my garmin connect profile 
+(https://connect.garmin.com/signin).
+
+to clean and format the data i used python in a jupyter lab environment. those data wrangling files are called *1-loading_and_cleaning.ipynb* and *2-processing.ipynb*. after cleaning and filtering, i exported a final *numeric_data.csv*.
+
+to build a dynamic dashboard i used the plotly & dash python framework. plotly is a stand-alone library for generating beautiful graphics. dash is its web-partner that lets you publish these dashboards and style them with html and css. 
+
+bootstrap and node styling are implemented help from the dash_bootstrap_components and dash_mantine_components libraries.
+
+application code is written in *app.py*. to launch the web app run ```python3 app.py``` and visit the local host url.
+
+***
+
+#### five tips on running your first ultra...
 
 1. __run (a lot)__. i ran more than 5,000 miles before i ran my first hundred. this included a half marathon, two marathons and three smaller ultras (one 50 mile race & two 100 kilometer races).
 
@@ -30,26 +48,7 @@ read my story and see for yourself how i went from not-a-runner to 100-mile-fini
 
 ***
 
-#### notes
-* My first run was April 9th 2018 and my 100 Miler was February 5th 2022. But I wasn't training for the 100 miler on April 9th, I was just training for the Providence half marathon. I can add colored sections to a chart to denote what race I was training for... Providence Half, Kennebunkport Full, Milwaukee Full, Zion 100K, Bandera 100K, Chicago 50M, Rocky Raccoon 100M. It's important to recognize this for calculating an accuracy score as well.
-
-* Add jupyter lab widgets for interactions.
-
-* Clean up formatting... Can you output python variables in markdown cells? Or is there a cleaner way to print text and variables togther?
-
-* Incorporate more story... Images.
-
-* Separate file just for beautiful plots.
-
-__Markdown Formatting Guide__
-https://www.ibm.com/docs/en/watson-studio-local/1.2.3?topic=notebooks-markdown-jupyter-cheatsheet
-
-#### future...
-i'm starting to realize that this project should be extensible. what if i turn this notebook into a web app so other runners can upload their exported garmin data and get some neat graphics & such about their running performance? i think i'll do that, after completing my own analysis.
-
-after further research, this seems highly attainable via the dash & plotly framework. 
-
-#### reference:
+#### reference...
 
 #### virtual environments
 Create a Python3 Virtual Environment: 
@@ -64,7 +63,9 @@ Deactivate the Virtual Environment:
 To Remove a Virtual Environment:
 ```sudo em -rf venv```
 
----
 #### requirements.txt
 Automagically create a requirements.txt file:
 ```pip3 freeze > requirements.txt```
+
+#### markdown formatting guide
+https://www.ibm.com/docs/en/watson-studio-local/1.2.3?topic=notebooks-markdown-jupyter-cheatsheet
