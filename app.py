@@ -101,7 +101,9 @@ total_runs = int(df[df['Distance'] > 0].shape[0])
 total_hours = df['Time_m'].sum() / 60.
 total_calories = df['Calories'].sum()
 average_distance = df['Distance'].mean()
-average_minutes = df['Time_m'].mean()
+max_distance = df['Distance'].max()
+average_hours = df['Time_m'].mean() / 60.
+max_hours = df['Time_m'].max() / 60.
 print(df.head())
 
 start_date = df.index.min()
@@ -193,7 +195,7 @@ app.layout = dbc.Container(
         style={'border-radius': '0px', 'padding': '10px'}),
         html.Br(),
 
-        # additional summary stats & distance distribution
+        # additional summary stats & distance
         html.Div(dbc.Row(
                 [
                 dbc.Col([
@@ -206,6 +208,22 @@ app.layout = dbc.Container(
                 dbc.Col([
                         dbc.CardBody(
                             [
+                                html.H6('Max Run Duration (miles)...',
+                                        className='card-title'),
+                                html.P('{}'.format(max_distance),
+                                        className='card-text',
+                                        id='max_distance')
+                            ], className='card bg-light mb-3'),
+                        dbc.CardBody(
+                            [
+                                html.H6('Max Run Duration (hours)...',
+                                        className='card-title'),
+                                html.P('{}'.format(max_hours),
+                                        className='card-text',
+                                        id='max_hours')
+                            ], className='card bg-light mb-3'),
+                        dbc.CardBody(
+                            [
                                 html.H6('Average Run Duration (miles)...', 
                                         className='card-title'),
                                 html.P('{}'.format(average_distance),
@@ -214,28 +232,12 @@ app.layout = dbc.Container(
                             ], className='card bg-light mb-3'),
                         dbc.CardBody(
                             [
-                                html.H6('Average Run Duration (minutes)...',
+                                html.H6('Average Run Duration (hours)...',
                                         className='card-title'),
-                                html.P('{}'.format(average_minutes),
+                                html.P('{}'.format(average_hours),
                                         className='card-text',
-                                        id='average_minutes')
+                                        id='average_hours')
                             ], className='card bg-light mb-3'),
-                        # dbc.CardBody(
-                        #     [
-                        #         html.H6('Hour Count...',
-                        #                 className='card-title'),
-                        #         html.P('{}'.format(total_hours),
-                        #                 className='card-text',
-                        #                 id='total_hours')
-                        #     ], className='card bg-light mb-3'),
-                        # dbc.CardBody(
-                        #     [
-                        #         html.H6('Calorie Count...',
-                        #                 className='card-title'),
-                        #         html.P('{}'.format(total_calories),
-                        #                 className='card-text',
-                        #                 id='total_calories')
-                            # ], className='card bg-light mb-3'),
                         ], width=3)
                 ], align='center'),
         style={'border-radius': '20px', 'padding': '10px'}),
@@ -288,6 +290,28 @@ def updateTotalCalories(value):
         total_calories = int(df[value[0]:value[1]]['Calories'].sum())
         return f'{total_calories:,.0f}'
 
+# max distance
+@app.callback(
+    Output('max_distance', 'children'),
+    Input('date_filter', 'value'))
+def updateMaxDistance(value):
+    if not value:
+        raise PreventUpdate
+    else:
+        max_distance = int(df[value[0]:value[1]]['Distance'].max())
+        return f'{max_distance:,.0f}'
+
+# max hours
+@app.callback(
+    Output('max_hours', 'children'),
+    Input('date_filter', 'value'))
+def updateMaxHours(value):
+    if not value:
+        raise PreventUpdate
+    else:
+        max_hours = float(df[value[0]:value[1]]['Time_m'].max() / 60.)
+        return f'{max_hours:,.2f}'
+
 # average distance
 @app.callback(
     Output('average_distance', 'children'),
@@ -299,16 +323,16 @@ def updateAverageDistance(value):
         average_distance = int(df[value[0]:value[1]]['Distance'].mean())
         return f'{average_distance:,.0f}'
 
-# average minutes
+# average hours
 @app.callback(
-    Output('average_minutes', 'children'),
+    Output('average_hours', 'children'),
     Input('date_filter', 'value'))
-def updateAverageMinutes(value):
+def updateAverageHours(value):
     if not value:
         raise PreventUpdate
     else:
-        average_minutes = int(df[value[0]:value[1]]['Time_m'].mean())
-        return f'{average_minutes:,.0f}'
+        average_hours = float(df[value[0]:value[1]]['Time_m'].mean() / 60.)
+        return f'{average_hours:,.2f}'
 
 # distance plot
 @app.callback(
