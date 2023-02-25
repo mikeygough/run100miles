@@ -1,4 +1,4 @@
-# RUN 100 MILES
+# run100miles - cs50x final project
 #### Video Demo: https://www.youtube.com/watch?v=DnWMZ2d5u8Y
 
 ## about this project...
