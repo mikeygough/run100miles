@@ -1,4 +1,4 @@
-# run100miles - cs50x final project
+# run100miles - [cs50x final project](https://github.com/mikeygough/cs50x)
 #### Video Demo: https://www.youtube.com/watch?v=DnWMZ2d5u8Y
 
 ## about this project...
